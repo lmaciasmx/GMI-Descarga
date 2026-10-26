@@ -1,0 +1,19 @@
+{
+    "created_at": "2026-09-18T20:31:09+02:00",
+    "files": {
+        "app/Modules/Transfers/Controllers/Api/TransferController.php": "c31c046fdcbca71887150853bdd04ccb832d69866617e1f3320ea2f10116e4aa",
+        "app/Modules/Transfers/Controllers/TransferController.php": "aeb8627a22eed0ef5f83c835a95a664716aac2872abe18bee771dffdd3cf1e46",
+        "app/Modules/Transfers/Services/TransferService.php": "d2e53dc71856c02f965c3921f9eb55315bd56fab63b07f6dbfdfe67d44a60c9d",
+        "app/Modules/Transfers/Views/index.php": "7df29122e9d66b122ac51de4ed6c598ae34bd6b1093078d7216c62abeb0f4792",
+        "public/assets/js/transfers.js": "db6f9d109aaf25b1fbb8bd65f08ca7d7eb75de071992300095a272e312174a5f",
+        "app/Modules/Inventory/Services/InventoryService.php": "04fb04b56129c99602e2fe2faa367677832529522b043726251b5c0c90b2b556",
+        "app/Modules/Supply/Controllers/Api/RequestController.php": "713bd4ebcf6eee5b68ec6b1bc922d04f0456249503c8ac20c1ec4439e5896dfe",
+        "app/Modules/Supply/Controllers/Api/ReservationController.php": "719b85af3618680295c0cf7144831cc6ddd06b8b1bec74d2fe70dad6888697c8",
+        "app/Modules/Supply/Controllers/RequestController.php": "79889b8fb5f21388b72ee228ef7ae09700a0aff3888d94fb4bdb81a8dd5a9d12",
+        "app/Modules/Supply/Services/RequestService.php": "0b4624ef9bc965717b47d1630618d7f4313725c7d489305cb37f8da7fdb791c9",
+        "app/Modules/Supply/Views/index.php": "cfa88a6c6df1c165cc89f1f413b131fd9cf85badb55c5854b173b6649c086ea8",
+        "public/assets/js/requests.js": "e0ece8877b9b698b9217e6562f22622820dc911f69af040314b0b816805e319d"
+    },
+    "command_existed": false,
+    "routes_sha256": "e069a7cdde4c8313ce1701582bf1a6887d30014b3c8ef1eaa51eefdf79b4eb25"
+}

@@ -1,0 +1,82 @@
+{
+    "generated_at": "2026-09-21T18:09:41+02:00",
+    "mode": "read-only backup before FASE 2",
+    "tables": {
+        "raw_material_requests": {
+            "exists": true,
+            "create": "CREATE TABLE `raw_material_requests` (\n  `id` bigint unsigned NOT NULL AUTO_INCREMENT,\n  `uuid` char(36) NOT NULL,\n  `folio` varchar(50) NOT NULL,\n  `company_id` bigint unsigned NOT NULL,\n  `site_id` bigint unsigned NOT NULL,\n  `source_warehouse_id` bigint unsigned DEFAULT NULL,\n  `request_type` varchar(30) NOT NULL DEFAULT 'production',\n  `destination_warehouse_id` bigint unsigned DEFAULT NULL,\n  `destination` varchar(120) NOT NULL,\n  `priority` varchar(20) NOT NULL DEFAULT 'normal',\n  `required_at` datetime NOT NULL,\n  `status` varchar(30) NOT NULL DEFAULT 'draft',\n  `requested_by` bigint unsigned NOT NULL,\n  `requested_at` datetime DEFAULT NULL,\n  `authorized_by` bigint unsigned DEFAULT NULL,\n  `authorized_at` datetime DEFAULT NULL,\n  `rejected_by` bigint unsigned DEFAULT NULL,\n  `rejected_at` datetime DEFAULT NULL,\n  `rejection_reason` varchar(255) DEFAULT NULL,\n  `observations` text,\n  `lock_version` int unsigned NOT NULL DEFAULT '0',\n  `created_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,\n  `updated_at` datetime DEFAULT NULL,\n  PRIMARY KEY (`id`),\n  UNIQUE KEY `uq_requests_uuid` (`uuid`),\n  UNIQUE KEY `uq_requests_folio` (`folio`),\n  KEY `ix_requests_status_date` (`company_id`,`site_id`,`status`,`required_at`),\n  KEY `fk_requests_site` (`site_id`),\n  KEY `ix_requests_destination_warehouse` (`destination_warehouse_id`),\n  KEY `ix_requests_source_warehouse` (`source_warehouse_id`),\n  CONSTRAINT `fk_requests_company` FOREIGN KEY (`company_id`) REFERENCES `companies` (`id`),\n  CONSTRAINT `fk_requests_destination_warehouse` FOREIGN KEY (`destination_warehouse_id`) REFERENCES `warehouses` (`id`),\n  CONSTRAINT `fk_requests_site` FOREIGN KEY (`site_id`) REFERENCES `sites` (`id`),\n  CONSTRAINT `fk_requests_source_warehouse` FOREIGN KEY (`source_warehouse_id`) REFERENCES `warehouses` (`id`)\n) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci",
+            "rows": [
+                {
+                    "id": "1",
+                    "uuid": "01a0bae0-8395-73c2-9e6c-667b773721a1",
+                    "folio": "SMP-20260919-01FCE230",
+                    "company_id": "3",
+                    "site_id": "3",
+                    "source_warehouse_id": "3",
+                    "request_type": "production",
+                    "destination_warehouse_id": null,
+                    "destination": "prueba",
+                    "priority": "high",
+                    "required_at": "2026-09-19 12:14:00",
+                    "status": "authorized",
+                    "requested_by": "1",
+                    "requested_at": "2026-09-19 12:14:30",
+                    "authorized_by": "1",
+                    "authorized_at": "2026-09-19 12:14:57",
+                    "rejected_by": null,
+                    "rejected_at": null,
+                    "rejection_reason": null,
+                    "observations": "",
+                    "lock_version": "1",
+                    "created_at": "2026-09-19 12:14:30",
+                    "updated_at": "2026-09-19 12:14:57"
+                }
+            ]
+        },
+        "raw_material_request_lines": {
+            "exists": true,
+            "create": "CREATE TABLE `raw_material_request_lines` (\n  `id` bigint unsigned NOT NULL AUTO_INCREMENT,\n  `request_id` bigint unsigned NOT NULL,\n  `line_number` int unsigned NOT NULL,\n  `species_id` bigint unsigned NOT NULL,\n  `size_grade_id` bigint unsigned DEFAULT NULL,\n  `quality_grade` varchar(20) DEFAULT NULL,\n  `requested_weight_kg` decimal(14,3) NOT NULL,\n  `reserved_weight_kg` decimal(14,3) NOT NULL DEFAULT '0.000',\n  `fulfilled_weight_kg` decimal(14,3) NOT NULL DEFAULT '0.000',\n  `status` varchar(30) NOT NULL DEFAULT 'pending',\n  `created_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,\n  `updated_at` datetime DEFAULT NULL,\n  PRIMARY KEY (`id`),\n  UNIQUE KEY `uq_request_line` (`request_id`,`line_number`),\n  KEY `ix_request_line_criteria` (`species_id`,`size_grade_id`,`quality_grade`,`status`),\n  KEY `fk_request_lines_size` (`size_grade_id`),\n  CONSTRAINT `fk_request_lines_request` FOREIGN KEY (`request_id`) REFERENCES `raw_material_requests` (`id`),\n  CONSTRAINT `fk_request_lines_size` FOREIGN KEY (`size_grade_id`) REFERENCES `size_grades` (`id`),\n  CONSTRAINT `fk_request_lines_species` FOREIGN KEY (`species_id`) REFERENCES `species` (`id`),\n  CONSTRAINT `ck_request_line_weights` CHECK (((`requested_weight_kg` > 0) and (`reserved_weight_kg` >= 0) and (`fulfilled_weight_kg` >= 0)))\n) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci",
+            "rows": [
+                {
+                    "id": "1",
+                    "request_id": "1",
+                    "line_number": "1",
+                    "species_id": "1",
+                    "size_grade_id": "44",
+                    "quality_grade": "B",
+                    "requested_weight_kg": "1500.000",
+                    "reserved_weight_kg": "0.000",
+                    "fulfilled_weight_kg": "0.000",
+                    "status": "pending",
+                    "created_at": "2026-09-19 12:14:30",
+                    "updated_at": "2026-09-19 12:14:30"
+                }
+            ]
+        },
+        "reservations": {
+            "exists": true,
+            "create": "CREATE TABLE `reservations` (\n  `id` bigint unsigned NOT NULL AUTO_INCREMENT,\n  `uuid` char(36) NOT NULL,\n  `folio` varchar(50) NOT NULL,\n  `request_id` bigint unsigned NOT NULL,\n  `status` varchar(30) NOT NULL DEFAULT 'active',\n  `expires_at` datetime NOT NULL,\n  `created_by` bigint unsigned NOT NULL,\n  `released_by` bigint unsigned DEFAULT NULL,\n  `released_at` datetime DEFAULT NULL,\n  `release_reason` varchar(255) DEFAULT NULL,\n  `lock_version` int unsigned NOT NULL DEFAULT '0',\n  `created_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,\n  `updated_at` datetime DEFAULT NULL,\n  PRIMARY KEY (`id`),\n  UNIQUE KEY `uq_reservations_uuid` (`uuid`),\n  UNIQUE KEY `uq_reservations_folio` (`folio`),\n  KEY `ix_reservations_request_status` (`request_id`,`status`,`expires_at`),\n  CONSTRAINT `fk_reservations_request` FOREIGN KEY (`request_id`) REFERENCES `raw_material_requests` (`id`)\n) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci",
+            "rows": []
+        },
+        "reservation_lines": {
+            "exists": true,
+            "create": "CREATE TABLE `reservation_lines` (\n  `id` bigint unsigned NOT NULL AUTO_INCREMENT,\n  `reservation_id` bigint unsigned NOT NULL,\n  `request_line_id` bigint unsigned NOT NULL,\n  `stock_unit_id` bigint unsigned NOT NULL,\n  `reserved_weight_kg` decimal(14,3) NOT NULL,\n  `fulfilled_weight_kg` decimal(14,3) NOT NULL DEFAULT '0.000',\n  `status` varchar(30) NOT NULL DEFAULT 'active',\n  `created_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,\n  `updated_at` datetime DEFAULT NULL,\n  PRIMARY KEY (`id`),\n  UNIQUE KEY `uq_reservation_stock` (`reservation_id`,`stock_unit_id`),\n  KEY `ix_reservation_lines_stock_status` (`stock_unit_id`,`status`),\n  KEY `fk_reservation_lines_request_line` (`request_line_id`),\n  CONSTRAINT `fk_reservation_lines_request_line` FOREIGN KEY (`request_line_id`) REFERENCES `raw_material_request_lines` (`id`),\n  CONSTRAINT `fk_reservation_lines_reservation` FOREIGN KEY (`reservation_id`) REFERENCES `reservations` (`id`),\n  CONSTRAINT `fk_reservation_lines_stock` FOREIGN KEY (`stock_unit_id`) REFERENCES `stock_units` (`id`),\n  CONSTRAINT `ck_reservation_line_weight` CHECK (((`reserved_weight_kg` > 0) and (`fulfilled_weight_kg` >= 0) and (`fulfilled_weight_kg` <= `reserved_weight_kg`)))\n) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci",
+            "rows": []
+        },
+        "transfers": {
+            "exists": true,
+            "create": "CREATE TABLE `transfers` (\n  `id` bigint unsigned NOT NULL AUTO_INCREMENT,\n  `uuid` char(36) NOT NULL,\n  `folio` varchar(50) NOT NULL,\n  `company_id` bigint unsigned NOT NULL,\n  `origin_warehouse_id` bigint unsigned NOT NULL,\n  `destination_warehouse_id` bigint unsigned NOT NULL,\n  `transfer_type` varchar(30) NOT NULL DEFAULT 'administrative',\n  `request_id` bigint unsigned DEFAULT NULL,\n  `reservation_id` bigint unsigned DEFAULT NULL,\n  `status` varchar(30) NOT NULL DEFAULT 'requested',\n  `requested_by` bigint unsigned NOT NULL,\n  `authorized_by` bigint unsigned DEFAULT NULL,\n  `shipped_by` bigint unsigned DEFAULT NULL,\n  `received_by` bigint unsigned DEFAULT NULL,\n  `requested_at` datetime NOT NULL,\n  `shipped_at` datetime DEFAULT NULL,\n  `received_at` datetime DEFAULT NULL,\n  `carrier_reference` varchar(100) DEFAULT NULL,\n  `observations` text,\n  `lock_version` int unsigned NOT NULL DEFAULT '0',\n  `created_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,\n  `updated_at` datetime DEFAULT NULL,\n  PRIMARY KEY (`id`),\n  UNIQUE KEY `uq_transfers_uuid` (`uuid`),\n  UNIQUE KEY `uq_transfers_folio` (`folio`),\n  KEY `ix_transfers_status` (`company_id`,`status`,`requested_at`),\n  KEY `fk_transfers_origin` (`origin_warehouse_id`),\n  KEY `fk_transfers_destination` (`destination_warehouse_id`),\n  KEY `ix_transfers_request` (`request_id`,`status`),\n  KEY `ix_transfers_reservation` (`reservation_id`,`status`),\n  CONSTRAINT `fk_transfers_company` FOREIGN KEY (`company_id`) REFERENCES `companies` (`id`),\n  CONSTRAINT `fk_transfers_destination` FOREIGN KEY (`destination_warehouse_id`) REFERENCES `warehouses` (`id`),\n  CONSTRAINT `fk_transfers_origin` FOREIGN KEY (`origin_warehouse_id`) REFERENCES `warehouses` (`id`),\n  CONSTRAINT `fk_transfers_request` FOREIGN KEY (`request_id`) REFERENCES `raw_material_requests` (`id`),\n  CONSTRAINT `fk_transfers_reservation` FOREIGN KEY (`reservation_id`) REFERENCES `reservations` (`id`),\n  CONSTRAINT `ck_transfer_different_warehouses` CHECK ((`origin_warehouse_id` <> `destination_warehouse_id`))\n) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci",
+            "rows": []
+        },
+        "transfer_lines": {
+            "exists": true,
+            "create": "CREATE TABLE `transfer_lines` (\n  `id` bigint unsigned NOT NULL AUTO_INCREMENT,\n  `transfer_id` bigint unsigned NOT NULL,\n  `line_number` int unsigned NOT NULL,\n  `stock_unit_id` bigint unsigned NOT NULL,\n  `shipped_weight_kg` decimal(14,3) NOT NULL,\n  `received_weight_kg` decimal(14,3) DEFAULT NULL,\n  `difference_kg` decimal(14,3) DEFAULT NULL,\n  `status` varchar(30) NOT NULL DEFAULT 'prepared',\n  `created_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,\n  `updated_at` datetime DEFAULT NULL,\n  PRIMARY KEY (`id`),\n  UNIQUE KEY `uq_transfer_line` (`transfer_id`,`line_number`),\n  UNIQUE KEY `uq_transfer_stock` (`transfer_id`,`stock_unit_id`),\n  KEY `fk_transfer_lines_stock` (`stock_unit_id`),\n  CONSTRAINT `fk_transfer_lines_stock` FOREIGN KEY (`stock_unit_id`) REFERENCES `stock_units` (`id`),\n  CONSTRAINT `fk_transfer_lines_transfer` FOREIGN KEY (`transfer_id`) REFERENCES `transfers` (`id`),\n  CONSTRAINT `ck_transfer_line_weights` CHECK (((`shipped_weight_kg` > 0) and ((`received_weight_kg` is null) or (`received_weight_kg` >= 0))))\n) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci",
+            "rows": []
+        },
+        "transfer_weighings": {
+            "exists": true,
+            "create": "CREATE TABLE `transfer_weighings` (\n  `id` bigint unsigned NOT NULL AUTO_INCREMENT,\n  `uuid` char(36) NOT NULL,\n  `transfer_id` bigint unsigned NOT NULL,\n  `transfer_line_id` bigint unsigned NOT NULL,\n  `stock_unit_id` bigint unsigned NOT NULL,\n  `direction` varchar(20) NOT NULL,\n  `company_id` bigint unsigned NOT NULL,\n  `site_id` bigint unsigned NOT NULL,\n  `warehouse_id` bigint unsigned NOT NULL,\n  `scale_id` bigint unsigned DEFAULT NULL,\n  `scale_reading_id` bigint unsigned DEFAULT NULL,\n  `weight_kg` decimal(14,3) NOT NULL,\n  `baseline_weight_kg` decimal(14,3) NOT NULL,\n  `difference_kg` decimal(14,3) NOT NULL,\n  `difference_percent` decimal(9,4) NOT NULL,\n  `tolerance_kg` decimal(14,3) NOT NULL DEFAULT '2.000',\n  `tolerance_percent` decimal(9,4) NOT NULL DEFAULT '0.2500',\n  `within_tolerance` tinyint(1) NOT NULL DEFAULT '1',\n  `variance_reason` varchar(255) DEFAULT NULL,\n  `status` varchar(20) NOT NULL DEFAULT 'confirmed',\n  `is_current` tinyint(1) DEFAULT NULL,\n  `confirmed_by` bigint unsigned NOT NULL,\n  `confirmed_at` datetime NOT NULL,\n  `reversed_by` bigint unsigned DEFAULT NULL,\n  `reversed_at` datetime DEFAULT NULL,\n  `reversal_reason` varchar(255) DEFAULT NULL,\n  `created_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,\n  `updated_at` datetime DEFAULT NULL,\n  PRIMARY KEY (`id`),\n  UNIQUE KEY `uq_transfer_weighing_uuid` (`uuid`),\n  UNIQUE KEY `uq_transfer_weighing_current` (`transfer_line_id`,`direction`,`is_current`),\n  UNIQUE KEY `uq_transfer_scale_reading` (`scale_reading_id`),\n  KEY `ix_transfer_weighing_transfer` (`transfer_id`,`direction`,`status`),\n  KEY `ix_transfer_weighing_stock` (`stock_unit_id`,`confirmed_at`),\n  KEY `fk_transfer_weighing_company` (`company_id`),\n  KEY `fk_transfer_weighing_site` (`site_id`),\n  KEY `fk_transfer_weighing_warehouse` (`warehouse_id`),\n  KEY `fk_transfer_weighing_scale` (`scale_id`),\n  CONSTRAINT `fk_transfer_weighing_company` FOREIGN KEY (`company_id`) REFERENCES `companies` (`id`),\n  CONSTRAINT `fk_transfer_weighing_line` FOREIGN KEY (`transfer_line_id`) REFERENCES `transfer_lines` (`id`),\n  CONSTRAINT `fk_transfer_weighing_scale` FOREIGN KEY (`scale_id`) REFERENCES `scales` (`id`),\n  CONSTRAINT `fk_transfer_weighing_scale_reading` FOREIGN KEY (`scale_reading_id`) REFERENCES `scale_readings` (`id`),\n  CONSTRAINT `fk_transfer_weighing_site` FOREIGN KEY (`site_id`) REFERENCES `sites` (`id`),\n  CONSTRAINT `fk_transfer_weighing_stock` FOREIGN KEY (`stock_unit_id`) REFERENCES `stock_units` (`id`),\n  CONSTRAINT `fk_transfer_weighing_transfer` FOREIGN KEY (`transfer_id`) REFERENCES `transfers` (`id`),\n  CONSTRAINT `fk_transfer_weighing_warehouse` FOREIGN KEY (`warehouse_id`) REFERENCES `warehouses` (`id`),\n  CONSTRAINT `ck_transfer_weighing_direction` CHECK ((`direction` in (_utf8mb4'outbound',_utf8mb4'inbound'))),\n  CONSTRAINT `ck_transfer_weighing_status` CHECK ((`status` in (_utf8mb4'confirmed',_utf8mb4'reversed'))),\n  CONSTRAINT `ck_transfer_weighing_weight` CHECK ((`weight_kg` > 0))\n) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci",
+            "rows": []
+        }
+    }
+}

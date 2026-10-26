@@ -1,0 +1,1064 @@
+openapi: 3.1.0
+info:
+  title: Grupo Mar Operaciones API
+  version: 1.0.0
+  description: >-
+    API externa para operación marítima, pesaje, recepción, inventario y trazabilidad.
+    Las escrituras requieren Idempotency-Key. La facturación sólo registra referencias
+    fiscales y nunca modifica inventario físico.
+servers:
+  - url: https://descarga.empresa.local/api/v1
+    description: Producción (reemplazar por URL real)
+  - url: http://localhost:8080/api/v1
+    description: Desarrollo local
+security:
+  - ApiClient: []
+    ApiKey: []
+tags:
+  - name: Salud
+  - name: Catálogos
+  - name: Marítimo
+  - name: Descarga
+  - name: Pesaje
+  - name: Etiquetas
+  - name: Calidad
+  - name: Recepción
+  - name: Inventario
+  - name: Solicitudes
+  - name: Traspasos
+  - name: Ventas
+  - name: Facturación
+paths:
+  /health:
+    get:
+      tags: [Salud]
+      summary: Estado del servicio y la base de datos
+      x-permission: health.read
+      responses:
+        '200': {$ref: '#/components/responses/Success'}
+        '401': {$ref: '#/components/responses/Unauthorized'}
+        '429': {$ref: '#/components/responses/RateLimited'}
+  /catalogs/{catalog}:
+    get:
+      tags: [Catálogos]
+      summary: Consultar catálogo permitido
+      description: Catálogos expuestos por configuración; resultados limitados y filtrados por alcance.
+      x-permission: catalogs.read
+      parameters:
+        - {$ref: '#/components/parameters/Catalog'}
+        - name: q
+          in: query
+          schema: {type: string, maxLength: 120}
+        - name: limit
+          in: query
+          schema: {type: integer, minimum: 1, maximum: 500, default: 100}
+        - name: include_inactive
+          in: query
+          schema: {type: boolean, default: false}
+      responses:
+        '200': {$ref: '#/components/responses/Success'}
+        '401': {$ref: '#/components/responses/Unauthorized'}
+        '403': {$ref: '#/components/responses/Forbidden'}
+        '422': {$ref: '#/components/responses/ValidationError'}
+  /voyages/active:
+    get:
+      tags: [Marítimo]
+      summary: Viajes planeados o descargando
+      x-permission: voyages.read
+      parameters:
+        - name: company_id
+          in: query
+          schema: {$ref: '#/components/schemas/Identifier'}
+        - name: site_id
+          in: query
+          schema: {$ref: '#/components/schemas/Identifier'}
+      responses:
+        '200': {$ref: '#/components/responses/Success'}
+        '403': {$ref: '#/components/responses/Forbidden'}
+  /voyages:
+    post:
+      tags: [Marítimo]
+      summary: Crear viaje y fotografía de tanques
+      x-permission: voyages.manage
+      parameters: [{$ref: '#/components/parameters/IdempotencyKey'}]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: {$ref: '#/components/schemas/VoyageCreate'}
+      responses:
+        '201': {$ref: '#/components/responses/Created'}
+        '409': {$ref: '#/components/responses/Conflict'}
+        '422': {$ref: '#/components/responses/ValidationError'}
+  /voyages/{id}/transition:
+    post:
+      tags: [Marítimo]
+      summary: Transicionar una marea
+      description: >-
+        Iniciar exige un plan aprobado. Cerrar exige todos los planes terminados o cancelados,
+        al menos uno terminado y ninguna tina pendiente. Cancelar exige motivo y ausencia de operación.
+      x-permission: voyages.manage
+      parameters:
+        - {$ref: '#/components/parameters/Id'}
+        - {$ref: '#/components/parameters/IdempotencyKey'}
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [target]
+              properties:
+                target: {type: string, enum: [unloading, closed, canceled]}
+                reason: {type: [string, 'null'], minLength: 5, maxLength: 500}
+      responses:
+        '200': {$ref: '#/components/responses/Success'}
+        '409': {$ref: '#/components/responses/Conflict'}
+        '422': {$ref: '#/components/responses/ValidationError'}
+  /rsas:
+    post:
+      tags: [Marítimo]
+      summary: Registrar RSA del viaje
+      x-permission: voyages.manage
+      parameters: [{$ref: '#/components/parameters/IdempotencyKey'}]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: {$ref: '#/components/schemas/RsaCreate'}
+      responses:
+        '201': {$ref: '#/components/responses/Created'}
+        '409': {$ref: '#/components/responses/Conflict'}
+        '422': {$ref: '#/components/responses/ValidationError'}
+  /plans:
+    post:
+      tags: [Descarga]
+      summary: Crear plan de descarga
+      x-permission: plans.manage
+      parameters: [{$ref: '#/components/parameters/IdempotencyKey'}]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: {$ref: '#/components/schemas/PlanCreate'}
+      responses:
+        '201': {$ref: '#/components/responses/Created'}
+        '422': {$ref: '#/components/responses/ValidationError'}
+  /plans/{id}:
+    get:
+      tags: [Descarga]
+      summary: Consultar plan y composiciones
+      x-permission: plans.read
+      parameters: [{$ref: '#/components/parameters/Id'}]
+      responses:
+        '200': {$ref: '#/components/responses/Success'}
+        '403': {$ref: '#/components/responses/Forbidden'}
+        '404': {$ref: '#/components/responses/NotFound'}
+  /plans/{id}/transition:
+    post:
+      tags: [Descarga]
+      summary: Transicionar plan
+      description: Aprobar exige RSA activo/vigente; la máquina de estados rechaza saltos.
+      x-permission: plans.manage
+      parameters:
+        - {$ref: '#/components/parameters/Id'}
+        - {$ref: '#/components/parameters/IdempotencyKey'}
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [target]
+              properties:
+                target: {type: string, enum: [approved, in_progress, paused, finished, canceled]}
+                reason: {type: [string, 'null'], minLength: 5, maxLength: 500}
+      responses:
+        '200': {$ref: '#/components/responses/Success'}
+        '409': {$ref: '#/components/responses/Conflict'}
+        '422': {$ref: '#/components/responses/ValidationError'}
+  /fillings:
+    post:
+      tags: [Descarga]
+      summary: Iniciar llenado/clasificación de tina
+      x-permission: discharge.operate
+      parameters: [{$ref: '#/components/parameters/IdempotencyKey'}]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: {$ref: '#/components/schemas/FillingCreate'}
+      responses:
+        '201': {$ref: '#/components/responses/Created'}
+        '409': {$ref: '#/components/responses/Conflict'}
+        '422': {$ref: '#/components/responses/ValidationError'}
+  /fillings/{id}/complete:
+    post:
+      tags: [Descarga]
+      summary: Marcar tina lista para pesaje
+      x-permission: discharge.operate
+      parameters:
+        - {$ref: '#/components/parameters/Id'}
+        - {$ref: '#/components/parameters/IdempotencyKey'}
+      requestBody: {$ref: '#/components/requestBodies/EmptyObject'}
+      responses:
+        '200': {$ref: '#/components/responses/Success'}
+        '409': {$ref: '#/components/responses/Conflict'}
+        '422': {$ref: '#/components/responses/ValidationError'}
+  /scale/status:
+    get:
+      tags: [Pesaje]
+      summary: Estado del adapter de báscula
+      x-permission: scale.read
+      responses:
+        '200': {$ref: '#/components/responses/Success'}
+        '503': {$ref: '#/components/responses/Error'}
+  /scale/read-stable:
+    post:
+      tags: [Pesaje]
+      summary: Capturar una lectura estable e idempotente
+      description: >-
+        El servidor consulta el adapter, persiste la evidencia sin pesaje asociado y devuelve
+        su id. La captura sólo puede ser consumida una vez, por el mismo actor y antes de su
+        expiración configurable.
+      x-permission: scale.read
+      parameters: [{$ref: '#/components/parameters/IdempotencyKey'}]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: {$ref: '#/components/schemas/ScaleReadRequest'}
+      responses:
+        '200': {$ref: '#/components/responses/Success'}
+        '422': {$ref: '#/components/responses/ValidationError'}
+        '503': {$ref: '#/components/responses/Error'}
+  /weighings:
+    post:
+      tags: [Pesaje]
+      summary: Confirmar pesaje
+      description: >-
+        Conserva bruto, tara/fuente, neto físico, castigo y neto aceptado por separado.
+        Salvo contingencia manual, scale_id, scale_reading_id, stable, original_value y
+        device_timestamp deben reproducir exactamente la captura devuelta por /scale/read-stable.
+      x-permission: weighings.create
+      parameters: [{$ref: '#/components/parameters/IdempotencyKey'}]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: {$ref: '#/components/schemas/WeighingCreate'}
+      responses:
+        '201': {$ref: '#/components/responses/Created'}
+        '409': {$ref: '#/components/responses/Conflict'}
+        '422': {$ref: '#/components/responses/ValidationError'}
+  /weighings/{id}/reverse:
+    post:
+      tags: [Pesaje]
+      summary: Reversar pesaje confirmado
+      x-permission: weighings.reverse
+      parameters:
+        - {$ref: '#/components/parameters/Id'}
+        - {$ref: '#/components/parameters/IdempotencyKey'}
+      requestBody: {$ref: '#/components/requestBodies/Reason'}
+      responses:
+        '200': {$ref: '#/components/responses/Success'}
+        '409': {$ref: '#/components/responses/Conflict'}
+        '422': {$ref: '#/components/responses/ValidationError'}
+  /labels/print:
+    post:
+      tags: [Etiquetas]
+      summary: Generar e imprimir etiqueta
+      x-permission: labels.print
+      parameters: [{$ref: '#/components/parameters/IdempotencyKey'}]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: {$ref: '#/components/schemas/LabelPrint'}
+      responses:
+        '201': {$ref: '#/components/responses/Created'}
+        '422': {$ref: '#/components/responses/ValidationError'}
+  /labels/{id}/reprint:
+    post:
+      tags: [Etiquetas]
+      summary: Reimprimir etiqueta con motivo
+      x-permission: labels.reprint
+      parameters:
+        - {$ref: '#/components/parameters/Id'}
+        - {$ref: '#/components/parameters/IdempotencyKey'}
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              allOf:
+                - {$ref: '#/components/schemas/Reason'}
+                - type: object
+                  properties:
+                    printer_id: {$ref: '#/components/schemas/NullableIdentifier'}
+      responses:
+        '200': {$ref: '#/components/responses/Success'}
+        '422': {$ref: '#/components/responses/ValidationError'}
+  /quality/inspections:
+    post:
+      tags: [Calidad]
+      summary: Registrar inspección
+      x-permission: quality.inspect
+      parameters: [{$ref: '#/components/parameters/IdempotencyKey'}]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: {$ref: '#/components/schemas/QualityInspection'}
+      responses:
+        '201': {$ref: '#/components/responses/Created'}
+        '422': {$ref: '#/components/responses/ValidationError'}
+  /quality/inspections/{id}/approve:
+    post:
+      tags: [Calidad]
+      summary: Dictaminar inspección
+      description: El cambio de estado de stock, si existe, se registra como movimiento independiente.
+      x-permission: quality.approve
+      parameters:
+        - {$ref: '#/components/parameters/Id'}
+        - {$ref: '#/components/parameters/IdempotencyKey'}
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: {$ref: '#/components/schemas/QualityDecision'}
+      responses:
+        '200': {$ref: '#/components/responses/Success'}
+        '409': {$ref: '#/components/responses/Conflict'}
+        '422': {$ref: '#/components/responses/ValidationError'}
+  /receptions:
+    post:
+      tags: [Recepción]
+      summary: Confirmar recepción y crear inventario
+      description: Único punto de nacimiento del inventario inicial.
+      x-permission: receiving.confirm
+      parameters: [{$ref: '#/components/parameters/IdempotencyKey'}]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: {$ref: '#/components/schemas/ReceptionCreate'}
+      responses:
+        '201': {$ref: '#/components/responses/Created'}
+        '409': {$ref: '#/components/responses/Conflict'}
+        '422': {$ref: '#/components/responses/ValidationError'}
+  /inventory/movements:
+    post:
+      tags: [Inventario]
+      summary: Crear movimiento general confirmado
+      description: Mermas y ajustes requieren permiso inventory.adjust y motivo.
+      x-permission: inventory.move
+      parameters: [{$ref: '#/components/parameters/IdempotencyKey'}]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: {$ref: '#/components/schemas/MovementCreate'}
+      responses:
+        '201': {$ref: '#/components/responses/Created'}
+        '409': {$ref: '#/components/responses/Conflict'}
+        '422': {$ref: '#/components/responses/ValidationError'}
+  /inventory/movements/{id}/reverse:
+    post:
+      tags: [Inventario]
+      summary: Crear reverso compensatorio
+      description: Sólo recepción, reubicación, devolución, merma y ajustes; los documentos especializados se corrigen desde su flujo de negocio.
+      x-permission: inventory.reverse
+      parameters:
+        - {$ref: '#/components/parameters/Id'}
+        - {$ref: '#/components/parameters/IdempotencyKey'}
+      requestBody: {$ref: '#/components/requestBodies/Reason'}
+      responses:
+        '201': {$ref: '#/components/responses/Created'}
+        '409': {$ref: '#/components/responses/Conflict'}
+        '422': {$ref: '#/components/responses/ValidationError'}
+  /inventory/counts:
+    post:
+      tags: [Inventario]
+      summary: Iniciar conteo con fotografía de concurrencia
+      x-permission: inventory.adjust
+      parameters: [{$ref: '#/components/parameters/IdempotencyKey'}]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: {$ref: '#/components/schemas/CountStart'}
+      responses:
+        '201': {$ref: '#/components/responses/Created'}
+        '422': {$ref: '#/components/responses/ValidationError'}
+  /inventory/counts/{id}/lines:
+    post:
+      tags: [Inventario]
+      summary: Registrar unidad contada
+      x-permission: inventory.adjust
+      parameters:
+        - {$ref: '#/components/parameters/Id'}
+        - {$ref: '#/components/parameters/IdempotencyKey'}
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: {$ref: '#/components/schemas/CountLine'}
+      responses:
+        '200': {$ref: '#/components/responses/Success'}
+        '409': {$ref: '#/components/responses/Conflict'}
+        '422': {$ref: '#/components/responses/ValidationError'}
+  /inventory/counts/{id}/finish:
+    post:
+      tags: [Inventario]
+      summary: Finalizar captura de conteo
+      x-permission: inventory.adjust
+      parameters:
+        - {$ref: '#/components/parameters/Id'}
+        - {$ref: '#/components/parameters/IdempotencyKey'}
+      requestBody: {$ref: '#/components/requestBodies/EmptyObject'}
+      responses:
+        '200': {$ref: '#/components/responses/Success'}
+        '409': {$ref: '#/components/responses/Conflict'}
+  /inventory/counts/{id}/reconcile:
+    post:
+      tags: [Inventario]
+      summary: Conciliar conteo mediante compensaciones
+      x-permission: inventory.adjust
+      parameters:
+        - {$ref: '#/components/parameters/Id'}
+        - {$ref: '#/components/parameters/IdempotencyKey'}
+      requestBody: {$ref: '#/components/requestBodies/Reason'}
+      responses:
+        '201': {$ref: '#/components/responses/Created'}
+        '409': {$ref: '#/components/responses/Conflict'}
+        '422': {$ref: '#/components/responses/ValidationError'}
+  /requests:
+    post:
+      tags: [Solicitudes]
+      summary: Crear solicitud de materia prima
+      x-permission: requests.create
+      parameters: [{$ref: '#/components/parameters/IdempotencyKey'}]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: {$ref: '#/components/schemas/RequestCreate'}
+      responses:
+        '201': {$ref: '#/components/responses/Created'}
+        '422': {$ref: '#/components/responses/ValidationError'}
+  /requests/{id}/authorize:
+    post:
+      tags: [Solicitudes]
+      summary: Autorizar o rechazar solicitud
+      x-permission: requests.approve
+      parameters:
+        - {$ref: '#/components/parameters/Id'}
+        - {$ref: '#/components/parameters/IdempotencyKey'}
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [approved]
+              properties:
+                approved: {type: boolean}
+                reason: {type: [string, 'null'], minLength: 5, maxLength: 255}
+      responses:
+        '200': {$ref: '#/components/responses/Success'}
+        '409': {$ref: '#/components/responses/Conflict'}
+        '422': {$ref: '#/components/responses/ValidationError'}
+  /requests/{id}/availability:
+    get:
+      tags: [Solicitudes]
+      summary: Unidades disponibles para cada línea
+      x-permission: inventory.read
+      parameters: [{$ref: '#/components/parameters/Id'}]
+      responses:
+        '200': {$ref: '#/components/responses/Success'}
+        '403': {$ref: '#/components/responses/Forbidden'}
+        '404': {$ref: '#/components/responses/NotFound'}
+  /reservations:
+    post:
+      tags: [Solicitudes]
+      summary: Reservar unidades físicas específicas
+      x-permission: reservations.manage
+      parameters: [{$ref: '#/components/parameters/IdempotencyKey'}]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: {$ref: '#/components/schemas/ReservationCreate'}
+      responses:
+        '201': {$ref: '#/components/responses/Created'}
+        '409': {$ref: '#/components/responses/Conflict'}
+        '422': {$ref: '#/components/responses/ValidationError'}
+  /reservations/{id}/fulfill:
+    post:
+      tags: [Solicitudes]
+      summary: Surtir reserva a producción
+      description: Reduce existencia y reserva en una transacción y crea production_issue.
+      x-permission: reservations.manage
+      parameters:
+        - {$ref: '#/components/parameters/Id'}
+        - {$ref: '#/components/parameters/IdempotencyKey'}
+      requestBody: {$ref: '#/components/requestBodies/EmptyObject'}
+      responses:
+        '201': {$ref: '#/components/responses/Created'}
+        '409': {$ref: '#/components/responses/Conflict'}
+        '422': {$ref: '#/components/responses/ValidationError'}
+  /reservations/{id}/release:
+    post:
+      tags: [Solicitudes]
+      summary: Liberar reserva con motivo
+      x-permission: reservations.manage
+      parameters:
+        - {$ref: '#/components/parameters/Id'}
+        - {$ref: '#/components/parameters/IdempotencyKey'}
+      requestBody: {$ref: '#/components/requestBodies/Reason'}
+      responses:
+        '200': {$ref: '#/components/responses/Success'}
+        '409': {$ref: '#/components/responses/Conflict'}
+        '422': {$ref: '#/components/responses/ValidationError'}
+  /transfers:
+    post:
+      tags: [Traspasos]
+      summary: Crear traspaso de unidades completas
+      x-permission: transfers.manage
+      parameters: [{$ref: '#/components/parameters/IdempotencyKey'}]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: {$ref: '#/components/schemas/TransferCreate'}
+      responses:
+        '201': {$ref: '#/components/responses/Created'}
+        '409': {$ref: '#/components/responses/Conflict'}
+        '422': {$ref: '#/components/responses/ValidationError'}
+  /transfers/{id}/authorize:
+    post:
+      tags: [Traspasos]
+      summary: Autorizar o cancelar traspaso
+      x-permission: transfers.manage
+      parameters:
+        - {$ref: '#/components/parameters/Id'}
+        - {$ref: '#/components/parameters/IdempotencyKey'}
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [approved]
+              properties:
+                approved: {type: boolean}
+      responses:
+        '200': {$ref: '#/components/responses/Success'}
+        '409': {$ref: '#/components/responses/Conflict'}
+  /transfers/{id}/ship:
+    post:
+      tags: [Traspasos]
+      summary: Embarcar y colocar en tránsito
+      x-permission: transfers.manage
+      parameters:
+        - {$ref: '#/components/parameters/Id'}
+        - {$ref: '#/components/parameters/IdempotencyKey'}
+      requestBody: {$ref: '#/components/requestBodies/EmptyObject'}
+      responses:
+        '200': {$ref: '#/components/responses/Success'}
+        '409': {$ref: '#/components/responses/Conflict'}
+  /transfers/{id}/receive:
+    post:
+      tags: [Traspasos]
+      summary: Recibir en destino y registrar diferencias
+      x-permission: transfers.manage
+      parameters:
+        - {$ref: '#/components/parameters/Id'}
+        - {$ref: '#/components/parameters/IdempotencyKey'}
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: {$ref: '#/components/schemas/TransferReceive'}
+      responses:
+        '200': {$ref: '#/components/responses/Success'}
+        '409': {$ref: '#/components/responses/Conflict'}
+        '422': {$ref: '#/components/responses/ValidationError'}
+  /sales:
+    post:
+      tags: [Ventas]
+      summary: Crear orden física
+      description: No reserva ni modifica inventario; el despacho revalida disponibilidad.
+      x-permission: sales.manage
+      parameters: [{$ref: '#/components/parameters/IdempotencyKey'}]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: {$ref: '#/components/schemas/SaleCreate'}
+      responses:
+        '201': {$ref: '#/components/responses/Created'}
+        '409': {$ref: '#/components/responses/Conflict'}
+        '422': {$ref: '#/components/responses/ValidationError'}
+  /sales/{id}/dispatch:
+    post:
+      tags: [Ventas]
+      summary: Confirmar salida física de venta
+      x-permission: sales.manage
+      parameters:
+        - {$ref: '#/components/parameters/Id'}
+        - {$ref: '#/components/parameters/IdempotencyKey'}
+      requestBody: {$ref: '#/components/requestBodies/EmptyObject'}
+      responses:
+        '200': {$ref: '#/components/responses/Success'}
+        '409': {$ref: '#/components/responses/Conflict'}
+        '422': {$ref: '#/components/responses/ValidationError'}
+  /billing/references:
+    post:
+      tags: [Facturación]
+      summary: Registrar o actualizar referencia fiscal
+      description: La respuesta contiene inventory_changed=false; no se invoca InventoryService.
+      x-permission: billing.reference
+      parameters: [{$ref: '#/components/parameters/IdempotencyKey'}]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: {$ref: '#/components/schemas/BillingReference'}
+      responses:
+        '201': {$ref: '#/components/responses/Created'}
+        '409': {$ref: '#/components/responses/Conflict'}
+        '422': {$ref: '#/components/responses/ValidationError'}
+components:
+  securitySchemes:
+    ApiClient:
+      type: apiKey
+      in: header
+      name: X-API-CLIENT
+    ApiKey:
+      type: apiKey
+      in: header
+      name: X-API-KEY
+  parameters:
+    Id:
+      name: id
+      in: path
+      required: true
+      schema: {$ref: '#/components/schemas/Identifier'}
+    Catalog:
+      name: catalog
+      in: path
+      required: true
+      schema:
+        type: string
+        enum: [companies, sites, warehouses, chambers, locations, vessels, vessel-tanks, species, sizes, tubs, scales, printers, quality-defects]
+    IdempotencyKey:
+      name: Idempotency-Key
+      in: header
+      required: true
+      description: UUID o token único por comando; 8 a 128 caracteres. Reusar sólo con payload idéntico.
+      schema: {type: string, minLength: 8, maxLength: 128}
+  requestBodies:
+    EmptyObject:
+      required: true
+      content:
+        application/json:
+          schema: {type: object, additionalProperties: false}
+          example: {}
+    Reason:
+      required: true
+      content:
+        application/json:
+          schema: {$ref: '#/components/schemas/Reason'}
+  responses:
+    Success:
+      description: Operación correcta
+      content:
+        application/json:
+          schema: {$ref: '#/components/schemas/SuccessEnvelope'}
+    Created:
+      description: Recurso/documento creado
+      content:
+        application/json:
+          schema: {$ref: '#/components/schemas/SuccessEnvelope'}
+    Error:
+      description: Error controlado
+      content:
+        application/json:
+          schema: {$ref: '#/components/schemas/ErrorEnvelope'}
+    Unauthorized:
+      description: Credencial ausente o inválida
+      content:
+        application/json:
+          schema: {$ref: '#/components/schemas/ErrorEnvelope'}
+    Forbidden:
+      description: Permiso o alcance insuficiente
+      content:
+        application/json:
+          schema: {$ref: '#/components/schemas/ErrorEnvelope'}
+    NotFound:
+      description: Agregado no encontrado
+      content:
+        application/json:
+          schema: {$ref: '#/components/schemas/ErrorEnvelope'}
+    Conflict:
+      description: Duplicidad, idempotencia incompatible, estado o concurrencia
+      content:
+        application/json:
+          schema: {$ref: '#/components/schemas/ErrorEnvelope'}
+    ValidationError:
+      description: Regla de formato o dominio incumplida
+      content:
+        application/json:
+          schema: {$ref: '#/components/schemas/ErrorEnvelope'}
+    RateLimited:
+      description: Límite de solicitudes excedido
+      headers:
+        Retry-After:
+          schema: {type: integer}
+      content:
+        application/json:
+          schema: {$ref: '#/components/schemas/ErrorEnvelope'}
+  schemas:
+    Identifier: {type: integer, minimum: 1}
+    NullableIdentifier: {type: [integer, 'null'], minimum: 1}
+    DateTime:
+      type: string
+      description: Fecha y hora en formato MySQL; zona de instalación.
+      pattern: '^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}$'
+      example: '2026-09-13 08:30:00'
+    NullableDateTime:
+      type: [string, 'null']
+      description: Fecha y hora MySQL opcional; zona de instalación.
+      pattern: '^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}$'
+    DeviceDateTime:
+      type: string
+      format: date-time
+      description: Momento del dispositivo con offset; se normaliza a la zona de la aplicación.
+      example: '2026-09-13T08:30:00-06:00'
+    NullableDeviceDateTime:
+      type: [string, 'null']
+      format: date-time
+    SuccessEnvelope:
+      type: object
+      required: [success, data, meta, error]
+      properties:
+        success: {type: boolean, const: true}
+        data: {type: object, additionalProperties: true}
+        meta: {type: object, additionalProperties: true}
+        error: {type: 'null'}
+    ErrorEnvelope:
+      type: object
+      required: [success, data, meta, error]
+      properties:
+        success: {type: boolean, const: false}
+        data: {type: 'null'}
+        meta: {type: object}
+        error:
+          type: object
+          required: [code, message, details]
+          properties:
+            code: {type: string, example: INSUFFICIENT_AVAILABLE_STOCK}
+            message: {type: string}
+            details: {type: object, additionalProperties: true}
+    Reason:
+      type: object
+      required: [reason]
+      properties:
+        reason: {type: string, minLength: 5, maxLength: 500}
+    VoyageTank:
+      type: object
+      required: [tank_number]
+      properties:
+        vessel_tank_id: {$ref: '#/components/schemas/NullableIdentifier'}
+        tank_number: {type: string, maxLength: 20}
+        side: {type: [string, 'null'], maxLength: 20}
+        capacity_kg: {type: [number, 'null'], exclusiveMinimum: 0}
+        planned_weight_kg: {type: [number, 'null'], exclusiveMinimum: 0}
+    VoyageCreate:
+      type: object
+      required: [company_id, site_id, vessel_id, annual_number, year]
+      properties:
+        company_id: {$ref: '#/components/schemas/Identifier'}
+        site_id: {$ref: '#/components/schemas/Identifier'}
+        vessel_id: {$ref: '#/components/schemas/Identifier'}
+        receiving_warehouse_id: {$ref: '#/components/schemas/NullableIdentifier'}
+        annual_number: {type: integer, minimum: 1}
+        year: {type: integer, minimum: 2020, maximum: 2100}
+        port_name: {type: [string, 'null'], maxLength: 120}
+        arrival_at: {$ref: '#/components/schemas/NullableDateTime'}
+        notes: {type: [string, 'null'], maxLength: 1000}
+        tanks:
+          type: array
+          description: Omitir para fotografiar vessel_tanks activos.
+          items: {$ref: '#/components/schemas/VoyageTank'}
+    RsaCreate:
+      type: object
+      required: [voyage_id, code]
+      properties:
+        voyage_id: {$ref: '#/components/schemas/Identifier'}
+        code: {type: string, maxLength: 80}
+        issued_on: {type: [string, 'null'], format: date}
+        expires_on: {type: [string, 'null'], format: date}
+    PlanTankLine:
+      type: object
+      required: [voyage_tank_id, species_id, msc_code, dolphin_safe_code, freezing_temperature_c]
+      properties:
+        voyage_tank_id: {$ref: '#/components/schemas/Identifier'}
+        species_id: {$ref: '#/components/schemas/Identifier'}
+        size_grade_id: {$ref: '#/components/schemas/NullableIdentifier'}
+        planned_weight_kg: {type: number, exclusiveMinimum: 0}
+        msc_code: {type: string, enum: ['1.0', '2.0', '3.0', '3.1']}
+        dolphin_safe_code: {type: string, enum: [A, B]}
+        freezing_temperature_c: {type: number}
+        sequence_number: {type: integer, minimum: 1}
+    PlanCreate:
+      type: object
+      required: [voyage_id, tank_lines]
+      properties:
+        voyage_id: {$ref: '#/components/schemas/Identifier'}
+        rsa_id: {$ref: '#/components/schemas/NullableIdentifier'}
+        planned_start_at: {$ref: '#/components/schemas/NullableDateTime'}
+        planned_end_at: {$ref: '#/components/schemas/NullableDateTime'}
+        notes: {type: [string, 'null'], maxLength: 1000}
+        tank_lines:
+          type: array
+          minItems: 1
+          items: {$ref: '#/components/schemas/PlanTankLine'}
+    FillingCreate:
+      type: object
+      required: [plan_id, tub_id, actual_tank_id, species_id, size_grade_id, source_tank_ids]
+      properties:
+        plan_id: {$ref: '#/components/schemas/Identifier'}
+        tub_id: {$ref: '#/components/schemas/Identifier'}
+        actual_tank_id: {$ref: '#/components/schemas/Identifier'}
+        species_id: {$ref: '#/components/schemas/Identifier'}
+        size_grade_id: {$ref: '#/components/schemas/Identifier'}
+        source_tank_ids:
+          type: array
+          minItems: 1
+          uniqueItems: true
+          items: {$ref: '#/components/schemas/Identifier'}
+        sorter_user_id: {$ref: '#/components/schemas/NullableIdentifier'}
+        labeler_user_id: {$ref: '#/components/schemas/NullableIdentifier'}
+        observations: {type: [string, 'null'], maxLength: 1000}
+    ScaleReadRequest:
+      type: object
+      properties:
+        scale_id:
+          allOf: [{$ref: '#/components/schemas/NullableIdentifier'}]
+          description: Obligatorio si el cliente API no tiene una instalación fija; en la interfaz se selecciona por alcance.
+    WeighingCreate:
+      type: object
+      required: [filling_id, gross_weight_kg, tare_source, weight_source]
+      properties:
+        filling_id: {$ref: '#/components/schemas/Identifier'}
+        lot_id: {$ref: '#/components/schemas/NullableIdentifier'}
+        rsa_id: {$ref: '#/components/schemas/NullableIdentifier'}
+        certification: {type: [string, 'null'], maxLength: 20}
+        scale_id: {$ref: '#/components/schemas/NullableIdentifier'}
+        scale_reading_id:
+          allOf: [{$ref: '#/components/schemas/NullableIdentifier'}]
+          description: Captura estable, vigente, del mismo actor y aún no consumida; obligatoria salvo weight_source=manual.
+        gross_weight_kg: {type: number, exclusiveMinimum: 0}
+        tare_source: {type: string, enum: [catalog, painted, estimated]}
+        declared_tare_kg: {type: [number, 'null'], exclusiveMinimum: 0}
+        penalty_percent: {type: number, minimum: 0, maximum: 100, default: 0}
+        weight_source: {type: string, enum: [scale, middleware, manual, simulator]}
+        stable: {type: boolean, description: Debe ser true para una captura automática y coincidir con la evidencia persistida.}
+        original_value: {type: [string, 'null']}
+        device_timestamp: {$ref: '#/components/schemas/NullableDeviceDateTime'}
+        reason_code: {type: [string, 'null'], maxLength: 50}
+        observations: {type: [string, 'null'], maxLength: 1000}
+    LabelPrint:
+      type: object
+      required: [weighing_id, template_id]
+      properties:
+        weighing_id: {$ref: '#/components/schemas/Identifier'}
+        template_id: {$ref: '#/components/schemas/Identifier'}
+        printer_id: {$ref: '#/components/schemas/NullableIdentifier'}
+    QualityDefectLine:
+      type: object
+      required: [defect_id]
+      properties:
+        defect_id: {$ref: '#/components/schemas/Identifier'}
+        quantity: {type: [number, 'null'], minimum: 0}
+        unit: {type: [string, 'null'], maxLength: 20}
+        notes: {type: [string, 'null'], maxLength: 255}
+    QualityInspection:
+      type: object
+      required: [weighing_id]
+      properties:
+        weighing_id: {$ref: '#/components/schemas/Identifier'}
+        quality_grade: {type: [string, 'null'], maxLength: 20}
+        defect_percent: {type: number, minimum: 0, maximum: 100}
+        temperature_c: {type: [number, 'null']}
+        auto_grade: {type: boolean, default: false}
+        disposition: {type: string, enum: [pending, accepted, hold, rejected]}
+        defects:
+          type: array
+          items: {$ref: '#/components/schemas/QualityDefectLine'}
+        observations: {type: [string, 'null'], maxLength: 1000}
+    QualityDecision:
+      type: object
+      required: [disposition]
+      properties:
+        disposition: {type: string, enum: [accepted, released, hold, rejected]}
+        quality_grade: {type: [string, 'null'], maxLength: 20}
+        reason: {type: [string, 'null'], maxLength: 255}
+    ReceptionCreate:
+      type: object
+      required: [company_id, site_id, warehouse_id, location_id, weighing_ids]
+      properties:
+        company_id: {$ref: '#/components/schemas/Identifier'}
+        site_id: {$ref: '#/components/schemas/Identifier'}
+        warehouse_id: {$ref: '#/components/schemas/Identifier'}
+        location_id: {$ref: '#/components/schemas/Identifier'}
+        weighing_ids:
+          type: array
+          minItems: 1
+          uniqueItems: true
+          items: {$ref: '#/components/schemas/Identifier'}
+        observations: {type: [string, 'null'], maxLength: 1000}
+    MovementLine:
+      type: object
+      required: [stock_unit_id, quantity_kg]
+      properties:
+        stock_unit_id: {$ref: '#/components/schemas/Identifier'}
+        quantity_kg: {type: number, exclusiveMinimum: 0}
+        from_location_id: {$ref: '#/components/schemas/NullableIdentifier'}
+        to_location_id: {$ref: '#/components/schemas/NullableIdentifier'}
+        from_warehouse_id: {$ref: '#/components/schemas/NullableIdentifier'}
+        to_warehouse_id: {$ref: '#/components/schemas/NullableIdentifier'}
+    MovementCreate:
+      type: object
+      required: [movement_type, company_id, site_id, lines]
+      properties:
+        movement_type: {type: string, enum: [relocation, return, loss, adjustment_increase, adjustment_decrease]}
+        company_id: {$ref: '#/components/schemas/Identifier'}
+        site_id: {$ref: '#/components/schemas/Identifier'}
+        origin_warehouse_id: {$ref: '#/components/schemas/NullableIdentifier'}
+        destination_warehouse_id: {$ref: '#/components/schemas/NullableIdentifier'}
+        source_document_type: {type: [string, 'null'], maxLength: 60}
+        source_document_id: {$ref: '#/components/schemas/NullableIdentifier'}
+        destination_document_type: {type: [string, 'null'], maxLength: 60}
+        destination_document_id: {$ref: '#/components/schemas/NullableIdentifier'}
+        reason_code: {type: [string, 'null'], maxLength: 50}
+        observations: {type: [string, 'null'], maxLength: 1000}
+        lines:
+          type: array
+          minItems: 1
+          items: {$ref: '#/components/schemas/MovementLine'}
+    CountStart:
+      type: object
+      required: [warehouse_id]
+      properties:
+        warehouse_id: {$ref: '#/components/schemas/Identifier'}
+        chamber_id: {$ref: '#/components/schemas/NullableIdentifier'}
+        observations: {type: [string, 'null'], maxLength: 1000}
+    CountLine:
+      type: object
+      required: [stock_unit_id, location_id, weight_kg]
+      properties:
+        stock_unit_id: {$ref: '#/components/schemas/Identifier'}
+        location_id: {$ref: '#/components/schemas/Identifier'}
+        weight_kg: {type: number, minimum: 0}
+    RequestLine:
+      type: object
+      required: [species_id, requested_weight_kg]
+      properties:
+        species_id: {$ref: '#/components/schemas/Identifier'}
+        size_grade_id: {$ref: '#/components/schemas/NullableIdentifier'}
+        quality_grade: {type: [string, 'null'], maxLength: 20}
+        requested_weight_kg: {type: number, exclusiveMinimum: 0}
+    RequestCreate:
+      type: object
+      required: [company_id, site_id, destination, required_at, lines]
+      properties:
+        company_id: {$ref: '#/components/schemas/Identifier'}
+        site_id: {$ref: '#/components/schemas/Identifier'}
+        destination: {type: string, minLength: 2, maxLength: 120}
+        required_at: {$ref: '#/components/schemas/DateTime'}
+        priority: {type: string, enum: [low, normal, high, urgent], default: normal}
+        observations: {type: [string, 'null'], maxLength: 1000}
+        lines:
+          type: array
+          minItems: 1
+          items: {$ref: '#/components/schemas/RequestLine'}
+    ReservationSelection:
+      type: object
+      required: [request_line_id, stock_unit_id, quantity_kg]
+      properties:
+        request_line_id: {$ref: '#/components/schemas/Identifier'}
+        stock_unit_id: {$ref: '#/components/schemas/Identifier'}
+        quantity_kg: {type: number, exclusiveMinimum: 0}
+    ReservationCreate:
+      type: object
+      required: [request_id, selections]
+      properties:
+        request_id: {$ref: '#/components/schemas/Identifier'}
+        expires_at: {$ref: '#/components/schemas/NullableDateTime'}
+        selections:
+          type: array
+          minItems: 1
+          items: {$ref: '#/components/schemas/ReservationSelection'}
+    TransferCreate:
+      type: object
+      required: [company_id, origin_warehouse_id, destination_warehouse_id, stock_unit_ids]
+      properties:
+        company_id: {$ref: '#/components/schemas/Identifier'}
+        origin_warehouse_id: {$ref: '#/components/schemas/Identifier'}
+        destination_warehouse_id: {$ref: '#/components/schemas/Identifier'}
+        stock_unit_ids:
+          type: array
+          minItems: 1
+          uniqueItems: true
+          items: {$ref: '#/components/schemas/Identifier'}
+        carrier_reference: {type: [string, 'null'], maxLength: 100}
+        observations: {type: [string, 'null'], maxLength: 1000}
+    TransferReceive:
+      type: object
+      required: [location_id]
+      properties:
+        location_id: {$ref: '#/components/schemas/Identifier'}
+        received_weights:
+          type: object
+          description: Mapa stock_unit_id a kg recibidos.
+          additionalProperties: {type: number, minimum: 0}
+    SaleLine:
+      type: object
+      required: [stock_unit_id, quantity_kg]
+      properties:
+        stock_unit_id: {$ref: '#/components/schemas/Identifier'}
+        quantity_kg: {type: number, exclusiveMinimum: 0}
+        unit_price: {type: [number, 'null'], minimum: 0}
+        currency: {type: [string, 'null'], minLength: 3, maxLength: 3}
+    SaleCreate:
+      type: object
+      required: [company_id, site_id, customer_company_id, lines]
+      properties:
+        company_id: {$ref: '#/components/schemas/Identifier'}
+        site_id: {$ref: '#/components/schemas/Identifier'}
+        customer_company_id: {$ref: '#/components/schemas/Identifier'}
+        required_at: {$ref: '#/components/schemas/NullableDateTime'}
+        observations: {type: [string, 'null'], maxLength: 1000}
+        lines:
+          type: array
+          minItems: 1
+          items: {$ref: '#/components/schemas/SaleLine'}
+    BillingReference:
+      type: object
+      required: [company_id, site_id, external_document_id, document_type, fiscal_status]
+      properties:
+        company_id: {$ref: '#/components/schemas/Identifier'}
+        site_id: {$ref: '#/components/schemas/Identifier'}
+        sales_order_id: {$ref: '#/components/schemas/NullableIdentifier'}
+        external_system: {type: string, maxLength: 40, default: INVoiice}
+        external_document_id: {type: string, maxLength: 120}
+        document_type: {type: string, maxLength: 30, example: CFDI}
+        fiscal_uuid: {type: [string, 'null'], format: uuid}
+        fiscal_status: {type: string, maxLength: 30, example: issued}
+        issued_at: {$ref: '#/components/schemas/NullableDateTime'}
+        canceled_at: {$ref: '#/components/schemas/NullableDateTime'}
+        payload: {type: [object, 'null'], additionalProperties: true}

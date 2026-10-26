@@ -1,0 +1,82 @@
+.printer-master-hero{background:linear-gradient(135deg,#0b2942,#123f63);border-radius:18px;padding:22px 24px;color:#fff;box-shadow:0 10px 30px rgba(11,41,66,.16)}
+.printer-master-kicker{display:inline-flex;gap:.45rem;align-items:center;font-size:.78rem;text-transform:uppercase;letter-spacing:.08em;font-weight:700;color:#b9d7ea;margin-bottom:.5rem}
+.printer-master-hero h2{font-size:1.3rem;margin:0 0 .4rem}.printer-master-hero p{margin:0;max-width:900px;color:#d9e8f2}
+.printer-master-flow{display:flex;align-items:center;gap:.65rem;flex-wrap:wrap;margin-top:1rem;font-size:.88rem}.printer-master-flow span,.printer-master-flow strong{background:rgba(255,255,255,.1);padding:.42rem .65rem;border-radius:8px}.printer-master-flow strong{background:#fff;color:#0b2942}
+.printer-help{display:flex;gap:.7rem;background:#f5f9fc;border:1px solid #d7e5ef;border-radius:12px;padding:12px 14px;color:#304f65;font-size:.88rem}.printer-help i{font-size:1.1rem;color:#0b6fa4;margin-top:.05rem}
+[data-printer-mode][hidden]{display:none!important}
+@media(max-width:767.98px){.printer-master-hero{padding:18px}.printer-master-flow i{display:none}.printer-master-flow{gap:.4rem}}
+
+
+/* ===== Catálogo de impresoras v1.1 ===== */
+.printer-agent-card{
+  border:1px solid #dfe7ef;
+  box-shadow:0 2px 8px rgba(32,48,72,.04);
+}
+.printer-command{
+  min-height:42px;
+  display:flex;
+  align-items:center;
+  padding:.65rem .8rem;
+  border:1px solid #dbe3eb;
+  border-radius:.55rem;
+  background:#f8fafc;
+  overflow-x:auto;
+  white-space:nowrap;
+}
+.printer-command code{font-size:.8rem;color:#203040;}
+
+/* El form envuelve header/body/footer, por eso Bootstrap no podía mantener el footer visible. */
+#catalogModal .catalog-modal-dialog{
+  height:calc(100% - 1rem);
+  margin-top:.5rem;
+  margin-bottom:.5rem;
+}
+#catalogModal .modal-content{
+  max-height:100%;
+  overflow:hidden;
+}
+#catalogModal .catalog-modal-form{
+  display:flex;
+  flex-direction:column;
+  flex:1 1 auto;
+  min-height:0;
+  height:100%;
+  overflow:hidden;
+}
+#catalogModal .catalog-modal-form > .modal-header,
+#catalogModal .catalog-modal-form > .catalog-modal-footer{
+  flex:0 0 auto;
+}
+#catalogModal .catalog-modal-form > .modal-body{
+  flex:1 1 auto;
+  min-height:0;
+  overflow-y:auto;
+  overscroll-behavior:contain;
+}
+#catalogModal .catalog-modal-footer{
+  position:relative;
+  z-index:4;
+  background:#fff;
+  border-top:1px solid #e7ebef;
+  box-shadow:0 -4px 12px rgba(32,48,72,.05);
+}
+@media (max-width:767.98px){
+  #catalogModal .catalog-modal-dialog{height:calc(100% - .5rem);margin:.25rem;}
+  #catalogModal .catalog-modal-footer{flex-direction:column-reverse;align-items:stretch;}
+  #catalogModal .catalog-modal-footer .btn{width:100%;}
+}
+
+/* Básculas: reutiliza el lenguaje visual del centro de impresión sin tocarlo. */
+.scale-master-hero {
+  /* Mismo fondo del Centro de impresión: conserva contraste y legibilidad. */
+  background: linear-gradient(135deg, #0b2942, #123f63);
+}
+.scale-agent-card {
+  border-left: 4px solid var(--bs-primary);
+}
+.scale-master-hero .printer-master-kicker i {
+  margin-right: .35rem;
+}
+[data-scale-field][hidden] {
+  display: none !important;
+}

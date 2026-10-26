@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/10.5/phpunit.xsd"
+         bootstrap="vendor/codeigniter4/framework/system/Test/bootstrap.php"
+         colors="true"
+         cacheDirectory="writable/cache/phpunit"
+         failOnRisky="true"
+         failOnWarning="true">
+  <testsuites>
+    <testsuite name="unit"><directory>tests/unit</directory></testsuite>
+    <testsuite name="database"><directory>tests/database</directory></testsuite>
+  </testsuites>
+  <coverage includeUncoveredFiles="true">
+    <include><directory suffix=".php">app</directory></include>
+  </coverage>
+  <php>
+    <server name="CI_ENVIRONMENT" value="testing"/>
+    <server name="app.baseURL" value="http://example.com/"/>
+    <server name="database.tests.hostname" value="127.0.0.1"/>
+    <server name="database.tests.database" value="grupomar_operaciones_test"/>
+    <server name="database.tests.username" value="root"/>
+    <server name="database.tests.password" value="root"/>
+    <server name="database.tests.DBDriver" value="MySQLi"/>
+    <server name="database.tests.port" value="3306"/>
+  </php>
+</phpunit>

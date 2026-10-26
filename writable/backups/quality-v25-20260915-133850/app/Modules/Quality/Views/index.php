@@ -1,0 +1,25 @@
+<?= $this->extend('layouts/app') ?>
+<?= $this->section('pageActions') ?>
+<span class="status-pill warning"><span class="status-dot"></span> Reglas automáticas pendientes de validar</span>
+<?= $this->endSection() ?>
+<?= $this->section('content') ?>
+<div class="row g-3 mb-3">
+  <div class="col-xl-5">
+    <div class="card h-100"><div class="card-header">Registrar inspección</div><div class="card-body">
+      <form data-quality-inspection class="industrial-form">
+        <div class="mb-3"><label class="form-label" for="qualityWeighing">Pesaje / tina</label><select class="form-select" id="qualityWeighing" name="weighing_id" data-select2 required><option value="">Selecciona…</option><?php foreach ($pending as $row): ?><option value="<?= (int) $row['id'] ?>"><?= esc($row['folio'] . ' · ' . $row['tub_code'] . ' · ' . number_format((float) $row['accepted_net_kg'], 3) . ' kg') ?></option><?php endforeach ?></select></div>
+        <div class="row g-3"><div class="col-sm-4"><label class="form-label" for="qualityGrade">Grado manual</label><input class="form-control" id="qualityGrade" name="quality_grade" maxlength="20" placeholder="AAA / AA / A / B" required></div><div class="col-sm-4"><label class="form-label" for="defectPercent">Defecto %</label><input class="form-control" id="defectPercent" name="defect_percent" type="number" min="0" max="100" step="0.001"></div><div class="col-sm-4"><label class="form-label" for="temperature">Temperatura °C</label><input class="form-control" id="temperature" name="temperature_c" type="number" step="0.01"></div></div>
+        <div class="mt-3"><label class="form-label" for="qualityDisposition">Propuesta de disposición</label><select class="form-select" id="qualityDisposition" name="disposition"><option value="pending">Pendiente de dictamen</option><option value="hold">Retener</option><option value="accepted">Aceptar</option><option value="rejected">Rechazar</option></select></div>
+        <div class="mt-3"><span class="form-label d-block">Defectos observados</span><div class="quality-defect-grid"><?php foreach ($defects as $defect): ?><label class="quality-defect"><input class="form-check-input" type="checkbox" name="defects" value="<?= (int) $defect['id'] ?>"> <span><?= esc($defect['name']) ?><?php if ((int) $defect['requires_hold'] === 1): ?><small>Exige retención</small><?php endif ?></span></label><?php endforeach ?></div></div>
+        <div class="mt-3"><label class="form-label" for="qualityNotes">Observaciones</label><textarea class="form-control" id="qualityNotes" name="observations" rows="3" maxlength="1000"></textarea></div>
+        <button class="btn btn-primary btn-operational w-100 mt-3 no-offline-confirm" type="submit"><i class="bi bi-shield-check"></i> Registrar inspección</button>
+      </form>
+    </div></div>
+  </div>
+  <div class="col-xl-7">
+    <div class="card h-100"><div class="card-header d-flex justify-content-between"><span>Unidades pendientes de inspección</span><span class="badge text-bg-warning"><?= count($pending) ?></span></div><div class="card-body"><div class="table-responsive"><table class="table table-hover"><thead><tr><th>Pesaje</th><th>Tina</th><th>Lote / producto</th><th>Neto kg</th><th>Fecha</th></tr></thead><tbody><?php foreach ($pending as $row): ?><tr><td class="fw-bold"><?= esc($row['folio']) ?></td><td><?= esc($row['tub_code']) ?></td><td><?= esc($row['lot_code']) ?><br><small><?= esc($row['species_name'] . ' · ' . $row['size_name']) ?></small></td><td><?= number_format((float) $row['accepted_net_kg'], 3) ?></td><td><?= esc($row['confirmed_at']) ?></td></tr><?php endforeach ?></tbody></table></div></div></div>
+  </div>
+</div>
+<div class="card"><div class="card-header">Historial de inspecciones y dictámenes</div><div class="card-body"><div class="table-responsive"><table class="table table-hover" data-datatable><thead><tr><th>Inspección</th><th>Pesaje / tina</th><th>Lote</th><th>Grado</th><th>Defecto</th><th>Temperatura</th><th>Disposición</th><th>Estado</th><th>Acción</th></tr></thead><tbody><?php foreach ($inspections as $row): ?><tr><td>#<?= (int) $row['id'] ?><br><small><?= esc($row['inspected_at']) ?></small></td><td><?= esc($row['weighing_folio']) ?><br><small><?= esc($row['tub_code']) ?></small></td><td><?= esc($row['lot_code']) ?></td><td><?= esc($row['quality_grade'] ?? '—') ?></td><td><?= $row['defect_percent'] === null ? '—' : number_format((float) $row['defect_percent'], 3) . '%' ?></td><td><?= $row['temperature_c'] === null ? '—' : number_format((float) $row['temperature_c'], 2) . ' °C' ?></td><td><span class="badge-state <?= esc($row['disposition']) ?>"><?= esc($row['disposition']) ?></span></td><td><?= esc($row['status']) ?></td><td><?php if ($canApprove && $row['status'] === 'submitted'): ?><button class="btn btn-sm btn-success" type="button" data-quality-approve="<?= (int) $row['id'] ?>" data-grade="<?= esc($row['quality_grade'] ?? '') ?>">Dictaminar</button><?php else: ?>—<?php endif ?></td></tr><?php endforeach ?></tbody></table></div></div></div>
+<?= $this->endSection() ?>
+<?= $this->section('scripts') ?><script src="/assets/js/quality.js"></script><?= $this->endSection() ?>

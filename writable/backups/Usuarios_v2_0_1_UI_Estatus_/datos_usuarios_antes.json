@@ -1,0 +1,153 @@
+{
+    "generated_at": "2026-09-18T02:26:55+02:00",
+    "database": "grupomar_operaciones",
+    "tables": {
+        "users": {
+            "exists": true,
+            "rows": [
+                {
+                    "id": "1",
+                    "username": "admin",
+                    "status": null,
+                    "status_message": null,
+                    "active": "1",
+                    "last_active": "2026-09-17 18:15:27",
+                    "created_at": "2026-09-13 16:15:05",
+                    "updated_at": "2026-09-13 16:15:05",
+                    "deleted_at": null
+                },
+                {
+                    "id": "2",
+                    "username": "PRUEBA SORTEADOR",
+                    "status": null,
+                    "status_message": null,
+                    "active": "1",
+                    "last_active": null,
+                    "created_at": "2026-09-15 08:41:10",
+                    "updated_at": "2026-09-15 08:41:10",
+                    "deleted_at": null
+                },
+                {
+                    "id": "3",
+                    "username": "prueba etiquetador",
+                    "status": null,
+                    "status_message": null,
+                    "active": "1",
+                    "last_active": null,
+                    "created_at": "2026-09-15 08:42:11",
+                    "updated_at": "2026-09-15 08:42:11",
+                    "deleted_at": null
+                }
+            ]
+        },
+        "auth_identities": {
+            "exists": true,
+            "rows": [
+                {
+                    "id": "1",
+                    "user_id": "1",
+                    "type": "email_password",
+                    "name": null,
+                    "secret": "admin@grupomar.local",
+                    "secret2": "$2y$12$uKmbNe8pI3ii4YRy9ahH1.elD1npgeMMABI5bVfA58eLSbkiPZ/mK",
+                    "expires": null,
+                    "extra": null,
+                    "force_reset": "0",
+                    "last_used_at": "2026-09-17 18:15:09",
+                    "created_at": "2026-09-13 16:15:05",
+                    "updated_at": "2026-09-17 18:15:09"
+                },
+                {
+                    "id": "2",
+                    "user_id": "2",
+                    "type": "email_password",
+                    "name": null,
+                    "secret": "prueba@grupomar.com",
+                    "secret2": "$2y$12$JF9zkRa014..EsL4d3q.cenuq1VF0qX8I1F60VzHMYMMu4Dfgn3ZS",
+                    "expires": null,
+                    "extra": null,
+                    "force_reset": "0",
+                    "last_used_at": null,
+                    "created_at": "2026-09-15 08:41:10",
+                    "updated_at": "2026-09-15 08:41:11"
+                },
+                {
+                    "id": "3",
+                    "user_id": "3",
+                    "type": "email_password",
+                    "name": null,
+                    "secret": "prueba2@grupomar.com",
+                    "secret2": "$2y$12$0ArJPK2G04i0bDJgnW3FzOG5cCQFWsrOuFvIuKYG7XD4HeY7mDQO.",
+                    "expires": null,
+                    "extra": null,
+                    "force_reset": "0",
+                    "last_used_at": null,
+                    "created_at": "2026-09-15 08:42:12",
+                    "updated_at": "2026-09-15 08:42:12"
+                }
+            ]
+        },
+        "auth_groups_users": {
+            "exists": true,
+            "rows": [
+                {
+                    "id": "1",
+                    "user_id": "1",
+                    "group": "process_owner",
+                    "created_at": "2026-09-13 16:15:06"
+                },
+                {
+                    "id": "2",
+                    "user_id": "2",
+                    "group": "sorter",
+                    "created_at": "2026-09-15 08:41:11"
+                },
+                {
+                    "id": "3",
+                    "user_id": "3",
+                    "group": "labeler",
+                    "created_at": "2026-09-15 08:42:12"
+                }
+            ]
+        },
+        "auth_permissions_users": {
+            "exists": true,
+            "rows": []
+        },
+        "operational_user_scopes": {
+            "exists": true,
+            "rows": [
+                {
+                    "id": "1",
+                    "user_id": "1",
+                    "company_id": "3",
+                    "site_id": "3",
+                    "warehouse_id": "3",
+                    "station_code": "ADMIN",
+                    "active": "1",
+                    "created_at": "2026-09-13 16:15:06"
+                },
+                {
+                    "id": "2",
+                    "user_id": "2",
+                    "company_id": "3",
+                    "site_id": "3",
+                    "warehouse_id": "3",
+                    "station_code": null,
+                    "active": "1",
+                    "created_at": "2026-09-15 08:41:11"
+                },
+                {
+                    "id": "3",
+                    "user_id": "3",
+                    "company_id": "3",
+                    "site_id": "3",
+                    "warehouse_id": "3",
+                    "station_code": null,
+                    "active": "1",
+                    "created_at": "2026-09-15 08:42:12"
+                }
+            ]
+        }
+    }
+}

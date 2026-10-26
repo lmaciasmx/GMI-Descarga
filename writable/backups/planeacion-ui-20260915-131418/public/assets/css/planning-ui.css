@@ -1,0 +1,75 @@
+/* Planeación de descarga · mejoras UX v2.4 */
+#planModal .planning-plan-form{display:flex;flex-direction:column;min-height:0;max-height:calc(100vh - 2rem)}
+#planModal .planning-plan-body{overflow-y:auto;background:#f7f9fc;padding:1rem 1.1rem 1.15rem}
+.planning-modal-dialog,.planning-detail-dialog{--bs-modal-width:1180px}
+.planning-modal-content,.planning-detail-content{border:0;box-shadow:0 24px 70px rgba(20,42,67,.18);overflow:hidden}
+.planning-modal-header{padding:.9rem 1.1rem;border-bottom:1px solid #dde5ee;background:#fff}
+.planning-modal-icon{width:42px;height:42px;display:grid;place-items:center;border-radius:12px;background:#eaf4ff;color:#0d6efd;font-size:1.15rem;flex:0 0 auto}
+.planning-modal-icon-detail{background:#edf8f4;color:#16845b}
+.planning-section{background:#fff;border:1px solid #dce4ed;border-radius:12px;padding:.9rem;box-shadow:0 1px 2px rgba(22,42,63,.025)}
+.planning-section-heading{display:flex;align-items:center;justify-content:space-between;gap:1rem;margin-bottom:.75rem}
+.planning-section-kicker{display:block;color:#6b7f93;text-transform:uppercase;letter-spacing:.07em;font-size:.67rem;font-weight:700;margin-bottom:.2rem}
+.planning-total-badge{background:#e9f7ef;color:#16784e;border:1px solid #cdebdc}
+.planning-lines-scroll{max-height:335px;overflow:auto;border:1px solid #e0e6ed;border-radius:9px;background:#fff}
+.planning-lines-scroll table{min-width:940px}
+.planning-lines-scroll thead th,.planning-detail-lines-scroll thead th{position:sticky;top:0;z-index:2;background:#f4f7fa;color:#506579;font-size:.74rem;text-transform:uppercase;letter-spacing:.025em;white-space:nowrap;border-bottom:1px solid #d9e1e9}
+#planLines td{padding:.5rem .4rem}
+#planLines tbody tr:hover{background:#f8fbfe}
+#planLines [data-line="planned_weight_kg"]{min-width:110px;text-align:right}
+#planLines [data-line="freezing_temperature_c"]{min-width:95px}
+#planLines [data-line="species_id"]{min-width:165px}
+#planLines [data-line="size_grade_id"]{min-width:125px}
+#planLines [data-line="voyage_tank_id"]{min-width:105px}
+.planning-action-col{width:44px}
+.planning-notes-wrap{padding-top:.75rem}
+.planning-sticky-footer{flex-shrink:0;background:#fff;border-top:1px solid #dce4ed;padding:.72rem 1.1rem;box-shadow:0 -8px 22px rgba(20,42,67,.045);z-index:4}
+.planning-footer-summary{align-items:center;gap:1.1rem;color:#63778b;font-size:.78rem}
+.planning-footer-summary i{margin-right:.25rem;color:#0d6efd}
+.planning-footer-summary strong{color:#263b50}
+
+#planDetailModal .planning-detail-body{background:#f7f9fc;padding:1rem 1.1rem;overflow-y:auto}
+.planning-detail-summary #planDetailSummary{margin:0!important}
+#planDetailSummary .row{--bs-gutter-x:.65rem;--bs-gutter-y:.65rem}
+#planDetailSummary .card,#planDetailSummary .border{min-height:0!important;border-color:#dce4ed!important;border-radius:10px!important;box-shadow:none!important}
+#planDetailSummary .card-body,#planDetailSummary .p-3{padding:.7rem .85rem!important}
+#planDetailSummary small,#planDetailSummary .text-secondary{font-size:.72rem}
+.planning-detail-composition{padding-bottom:.7rem}
+.planning-detail-search{position:relative;width:min(280px,40vw)}
+.planning-detail-search i{position:absolute;left:.65rem;top:50%;transform:translateY(-50%);color:#7a8d9f;pointer-events:none}
+.planning-detail-search input{padding-left:1.9rem}
+.planning-detail-lines-scroll{max-height:310px;overflow:auto;border:1px solid #e0e6ed;border-radius:9px;background:#fff}
+.planning-detail-table{min-width:850px}
+.planning-detail-table td,.planning-detail-table th{padding:.48rem .58rem}
+.planning-detail-table tfoot th{position:sticky;bottom:0;background:#f8fafc;border-top:2px solid #dce4ed;z-index:2}
+
+.planning-validation-panel{background:#fff;border:1px solid #dce4ed;border-radius:12px;overflow:hidden}
+.planning-validation-header{display:flex;align-items:center;justify-content:space-between;gap:1rem;padding:.78rem .9rem}
+.planning-validation-icon{width:34px;height:34px;display:grid;place-items:center;border-radius:10px;background:#eaf7f0;color:#16845b;font-size:1rem}
+.planning-validation-summary{font-size:.78rem;font-weight:700;border-radius:999px;padding:.34rem .68rem;background:#eef2f6;color:#52677b;white-space:nowrap}
+.planning-validation-summary.is-ok{background:#e8f7ef;color:#14764b}
+.planning-validation-summary.has-errors{background:#fff0f0;color:#b42318}
+.planning-validation-details{border-top:1px solid #e5eaf0}
+.planning-validation-details>summary{display:flex;align-items:center;justify-content:space-between;padding:.58rem .9rem;color:#52677b;font-size:.79rem;font-weight:600;cursor:pointer;list-style:none;background:#fbfcfd}
+.planning-validation-details>summary::-webkit-details-marker{display:none}
+.planning-validation-details[open]>summary i{transform:rotate(180deg)}
+.planning-validation-details>summary i{transition:transform .18s ease}
+#planDetailValidations{display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr));gap:.55rem!important;padding:.7rem .9rem .9rem;margin:0!important}
+#planDetailValidations>*{width:auto!important;max-width:none!important;flex:none!important;padding:0!important;margin:0!important}
+#planDetailValidations>*>*{min-height:0!important;padding:.62rem .72rem!important;border-radius:9px!important}
+#planDetailValidations .h5,#planDetailValidations .fs-5{font-size:.9rem!important}
+#planDetailValidations small,#planDetailValidations .small,#planDetailValidations .text-secondary{font-size:.7rem!important;line-height:1.25}
+
+@media (max-width:991.98px){
+  .planning-modal-dialog,.planning-detail-dialog{margin:.5rem;max-width:calc(100% - 1rem)}
+  #planModal .planning-plan-form{max-height:calc(100vh - 1rem)}
+  #planDetailValidations{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .planning-section-heading{align-items:flex-start}
+}
+@media (max-width:575.98px){
+  #planDetailValidations{grid-template-columns:1fr}
+  .planning-detail-search{width:100%;margin-top:.35rem}
+  .planning-section-heading{flex-direction:column;align-items:stretch}
+  .planning-composition-heading .btn{width:100%}
+  .planning-sticky-footer{padding:.6rem}
+  .planning-sticky-footer .btn{flex:1}
+}

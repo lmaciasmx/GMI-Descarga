@@ -1,0 +1,789 @@
+/* GRUPOMAR · Solicitudes · Historial unificado 1.0.0 */
+
+#wr-app .wr-history-card,
+#wr-app .wr-history-table-card{
+  overflow:hidden;
+  border:1px solid #dbe4ed;
+  border-radius:12px;
+  background:#fff;
+  box-shadow:0 3px 12px rgba(28,61,90,.035);
+}
+
+.wr-new-top{
+  min-height:38px;
+  padding:.45rem .9rem;
+  border-radius:9px;
+  font-weight:700;
+}
+
+#wr-app .wr-history-heading{
+  padding:14px 18px 10px;
+  border-bottom:0;
+}
+
+#wr-app .wr-history-heading strong{
+  color:#123754;
+  font-size:1rem;
+}
+
+#wr-app .wr-history-heading small{
+  margin-top:2px;
+  color:#708197;
+}
+
+#wr-app .wr-history-body{
+  padding:10px 16px 14px;
+}
+
+#wr-app .wr-history-filters{
+  display:grid;
+  grid-template-columns:minmax(220px,1.3fr) minmax(150px,.85fr) minmax(180px,.95fr) minmax(170px,.9fr) minmax(260px,1.2fr) 120px;
+  gap:10px;
+  align-items:end;
+}
+
+#wr-app .wr-history-filter{
+  min-width:0;
+}
+
+#wr-app .wr-history-filter .form-label{
+  margin:0 0 5px;
+  color:#284865;
+  font-size:.72rem;
+  font-weight:700;
+}
+
+#wr-app .wr-history-filter .form-control,
+#wr-app .wr-history-filter .form-select{
+  min-height:38px;
+  border-color:#cfdbe7;
+  border-radius:8px;
+  box-shadow:none;
+  color:#294a68;
+  font-size:.82rem;
+}
+
+#wr-app .wr-history-input-icon{
+  position:relative;
+}
+
+#wr-app .wr-history-input-icon > i{
+  position:absolute;
+  z-index:2;
+  left:12px;
+  top:50%;
+  transform:translateY(-50%);
+  color:#64809c;
+  pointer-events:none;
+}
+
+#wr-app .wr-history-input-icon .form-control{
+  padding-left:34px;
+}
+
+#wr-app .wr-history-date-range{
+  display:flex;
+  align-items:center;
+  gap:5px;
+  min-height:38px;
+  padding:0 9px;
+  border:1px solid #cfdbe7;
+  border-radius:8px;
+  background:#fff;
+}
+
+#wr-app .wr-history-date-range > i{
+  color:#4d708f;
+}
+
+#wr-app .wr-history-date-range > span{
+  color:#9aa8b5;
+}
+
+#wr-app .wr-history-date-range .form-control{
+  min-width:0;
+  min-height:34px;
+  padding:4px 3px;
+  border:0;
+  background:transparent;
+}
+
+#wr-app .wr-history-filter-action .btn{
+  min-height:38px;
+  border-radius:8px;
+  font-weight:700;
+}
+
+#wr-app .wr-history-kpis{
+  display:grid;
+  grid-template-columns:repeat(5,minmax(0,1fr));
+  gap:10px;
+  margin-top:12px;
+}
+
+#wr-app .wr-history-kpi{
+  display:flex;
+  align-items:center;
+  gap:11px;
+  min-height:74px;
+  padding:10px 13px;
+  border:1px solid transparent;
+  border-radius:9px;
+}
+
+#wr-app .wr-history-kpi-icon{
+  width:40px;
+  height:40px;
+  flex:0 0 40px;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  border-radius:10px;
+  font-size:1.1rem;
+}
+
+#wr-app .wr-history-kpi > div{
+  min-width:0;
+  display:flex;
+  flex-direction:column;
+  line-height:1.05;
+}
+
+#wr-app .wr-history-kpi span:not(.wr-history-kpi-icon){
+  font-size:.72rem;
+}
+
+#wr-app .wr-history-kpi strong{
+  margin-top:3px;
+  font-size:1.2rem;
+  font-weight:800;
+}
+
+#wr-app .wr-history-kpi small{
+  margin-top:3px;
+  color:#708197;
+  font-size:.67rem;
+}
+
+#wr-app .wr-history-kpi.total{background:#f2f8ff;border-color:#e1edf9;color:#27577e}
+#wr-app .wr-history-kpi.total .wr-history-kpi-icon{background:#dff0ff;color:#0879c4}
+#wr-app .wr-history-kpi.pending{background:#fff8eb;border-color:#f8edd5;color:#bd7400}
+#wr-app .wr-history-kpi.pending .wr-history-kpi-icon{background:#fff0c9;color:#e89200}
+#wr-app .wr-history-kpi.accepted{background:#eefaf4;border-color:#e1f3e9;color:#137d4c}
+#wr-app .wr-history-kpi.accepted .wr-history-kpi-icon{background:#daf4e5;color:#0a9453}
+#wr-app .wr-history-kpi.supply{background:#f5f0ff;border-color:#ebe1ff;color:#7342cc}
+#wr-app .wr-history-kpi.supply .wr-history-kpi-icon{background:#eadfff;color:#7b46db}
+#wr-app .wr-history-kpi.closed{background:#f5f7f9;border-color:#e6ebef;color:#5b6875}
+#wr-app .wr-history-kpi.closed .wr-history-kpi-icon{background:#e7edf2;color:#526170}
+
+#wr-app .wr-history-table-card{
+  padding:0;
+}
+
+#wr-app .wr-history-table-toolbar{
+  display:flex;
+  align-items:center;
+  justify-content:flex-end;
+  gap:12px;
+  padding:10px 12px 6px;
+  color:#6a7c90;
+  font-size:.74rem;
+}
+
+#wr-app #wr-history-per-page{
+  width:auto;
+  min-width:118px;
+  border-color:#d2dde8;
+  border-radius:8px;
+  color:#2d4d69;
+  font-size:.75rem;
+}
+
+#wr-app .wr-history-table-wrap{
+  padding:0 10px;
+}
+
+#wr-app .wr-history-table{
+  min-width:1120px;
+}
+
+#wr-app .wr-history-table thead th{
+  padding:9px 10px;
+  border-top:1px solid #dce6ef;
+  border-bottom:1px solid #cfdce8;
+  background:#f2f6fa;
+  color:#405d79;
+  font-size:.65rem;
+  font-weight:800;
+  text-transform:uppercase;
+  white-space:nowrap;
+}
+
+#wr-app .wr-history-table tbody td{
+  padding:9px 10px;
+  border-bottom:1px solid #e8eef4;
+  color:#2f4b65;
+  font-size:.76rem;
+  vertical-align:middle;
+}
+
+#wr-app .wr-history-table tbody tr:hover td{
+  background:#fbfdff;
+}
+
+#wr-app .wr-history-folio{
+  display:block;
+  margin-bottom:3px;
+  color:#113b5d;
+  font-size:.8rem;
+  font-weight:800;
+  white-space:nowrap;
+}
+
+#wr-app .wr-history-type-line{
+  display:flex;
+  align-items:center;
+  gap:6px;
+  min-width:0;
+  color:#66778a;
+  font-size:.67rem;
+}
+
+#wr-app .wr-history-type-line > span:last-child{
+  min-width:0;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+}
+
+#wr-app .wr-history-type{
+  display:inline-flex;
+  align-items:center;
+  flex:0 0 auto;
+  padding:3px 7px;
+  border-radius:999px;
+  font-size:.64rem;
+  font-weight:800;
+}
+
+#wr-app .wr-history-type.transfer{background:#ddf5e7;color:#11804d}
+#wr-app .wr-history-type.production{background:#def0ff;color:#0873bb}
+#wr-app .wr-history-type.sale{background:#eee3ff;color:#7442cf}
+#wr-app .wr-history-type.other{background:#edf1f4;color:#526170}
+
+#wr-app .wr-history-route{
+  display:flex;
+  flex-direction:column;
+  gap:2px;
+}
+
+#wr-app .wr-history-route strong{
+  color:#183f5f;
+  font-size:.76rem;
+  font-weight:700;
+}
+
+#wr-app .wr-history-route span{
+  color:#667b8f;
+  font-size:.69rem;
+}
+
+#wr-app .wr-history-date{
+  display:flex;
+  flex-direction:column;
+  gap:1px;
+}
+
+#wr-app .wr-history-date strong{
+  color:#264864;
+  font-size:.74rem;
+}
+
+#wr-app .wr-history-date span{
+  color:#6b7d90;
+  font-size:.7rem;
+}
+
+#wr-app .wr-history-weight{
+  display:block;
+  color:#173e60;
+  font-size:.78rem;
+  font-weight:800;
+  white-space:nowrap;
+}
+
+#wr-app .wr-history-weight + small{
+  display:block;
+  margin-top:2px;
+  color:#778899;
+  font-size:.65rem;
+}
+
+#wr-app .wr-history-coverage{
+  display:grid;
+  grid-template-columns:minmax(70px,1fr) auto;
+  gap:4px 7px;
+  align-items:center;
+  min-width:140px;
+}
+
+#wr-app .wr-history-coverage > div{
+  height:8px;
+  overflow:hidden;
+  border-radius:999px;
+  background:#e3eaf0;
+}
+
+#wr-app .wr-history-coverage > div span{
+  display:block;
+  height:100%;
+  border-radius:999px;
+  background:#1598df;
+}
+
+#wr-app .wr-history-coverage strong{
+  color:#235273;
+  font-size:.68rem;
+}
+
+#wr-app .wr-history-coverage small{
+  grid-column:1 / -1;
+  color:#718295;
+  font-size:.62rem;
+  white-space:nowrap;
+}
+
+#wr-app .wr-history-units{
+  display:inline-flex;
+  min-width:34px;
+  justify-content:center;
+  padding:4px 7px;
+  border-radius:8px;
+  background:#f0f4f8;
+  color:#365572;
+  font-size:.7rem;
+  font-weight:800;
+}
+
+#wr-app .wr-history-status{
+  display:inline-flex;
+  align-items:center;
+  gap:5px;
+  padding:5px 8px;
+  border-radius:999px;
+  font-size:.65rem;
+  font-weight:800;
+  white-space:nowrap;
+}
+
+#wr-app .wr-history-status i{
+  font-size:.42rem;
+}
+
+#wr-app .wr-history-status.pending{background:#fff0cf;color:#a96a00}
+#wr-app .wr-history-status.accepted{background:#dcf4e6;color:#0f7947}
+#wr-app .wr-history-status.supply{background:#eee4ff;color:#7540d1}
+#wr-app .wr-history-status.closed{background:#e9edf1;color:#53616e}
+#wr-app .wr-history-status.rejected{background:#ffe1e3;color:#bd2c39}
+
+#wr-app .wr-history-table .btn{
+  min-width:58px;
+  border-radius:8px;
+  font-weight:700;
+}
+
+#wr-app .wr-history-pagination{
+  display:flex;
+  justify-content:flex-end;
+  align-items:center;
+  gap:0;
+  padding:9px 12px 12px;
+}
+
+#wr-app .wr-history-page-btn{
+  min-width:34px;
+  min-height:32px;
+  padding:5px 9px;
+  border:1px solid #d5e0ea;
+  background:#fff;
+  color:#31516d;
+  font-size:.72rem;
+  font-weight:700;
+}
+
+#wr-app .wr-history-page-btn:first-child{border-radius:8px 0 0 8px}
+#wr-app .wr-history-page-btn:last-child{border-radius:0 8px 8px 0}
+#wr-app .wr-history-page-btn + .wr-history-page-btn{margin-left:-1px}
+#wr-app .wr-history-page-btn.active{z-index:1;border-color:#1385bd;background:#1385bd;color:#fff}
+#wr-app .wr-history-page-btn:disabled{color:#aab5bf;background:#f7f9fb}
+
+@media (max-width:1350px){
+  #wr-app .wr-history-filters{
+    grid-template-columns:repeat(3,minmax(0,1fr));
+  }
+  #wr-app .wr-history-filter-action{
+    align-self:end;
+  }
+}
+
+@media (max-width:992px){
+  #wr-app .wr-history-kpis{
+    grid-template-columns:repeat(2,minmax(0,1fr));
+  }
+  #wr-app .wr-history-filters{
+    grid-template-columns:repeat(2,minmax(0,1fr));
+  }
+}
+
+@media (max-width:620px){
+  #wr-app .wr-history-filters,
+  #wr-app .wr-history-kpis{
+    grid-template-columns:1fr;
+  }
+  #wr-app .wr-history-date-range{
+    flex-wrap:wrap;
+  }
+  #wr-app .wr-history-table-toolbar{
+    justify-content:space-between;
+  }
+}
+/* ==========================================================================
+   GRUPOMAR · Historial unificado 1.0.1
+   Ajustes: Nueva solicitud en encabezado + filtro recuperable.
+   ========================================================================== */
+
+#wr-app .wr-history-heading{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:18px;
+}
+
+#wr-app .wr-history-heading > div{
+  min-width:0;
+}
+
+#wr-app .wr-history-new{
+  flex:0 0 auto;
+  min-height:32px;
+  padding:.35rem .7rem;
+  border-radius:8px;
+  font-size:.74rem;
+  font-weight:800;
+}
+
+#wr-app #wr-history-filter-submit:disabled{
+  opacity:.72;
+  cursor:wait;
+}
+
+@media (max-width:620px){
+  #wr-app .wr-history-heading{
+    align-items:flex-start;
+    flex-direction:column;
+  }
+}
+
+/* ==========================================================================
+   GRUPOMAR · Solicitudes · Propuesta de tinas por solicitante 1.0.1
+   ========================================================================== */
+
+#wr-app .wr-requester-line-count{
+  display:inline-flex;
+  align-items:center;
+  gap:5px;
+  margin-top:5px;
+  padding:3px 7px;
+  border-radius:999px;
+  background:#eef6ff;
+  color:#17608e;
+  font-size:.66rem;
+  font-weight:700;
+}
+
+#wr-app .wr-requester-proposal-box,
+#wr-app .wr-supply-selection-box{
+  padding:12px 14px;
+  border:1px solid #dbe5ef;
+  border-radius:10px;
+  background:#fff;
+}
+
+#wr-app .wr-requester-proposal-box{
+  border-color:#cfe1f1;
+  background:#fbfdff;
+}
+
+#wr-app .wr-requester-proposal-head{
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:16px;
+}
+
+#wr-app .wr-requester-proposal-count{
+  flex:0 0 auto;
+  display:inline-flex;
+  align-items:center;
+  padding:5px 9px;
+  border-radius:999px;
+  background:#e8f4ff;
+  color:#116595;
+  font-size:.68rem;
+  font-weight:800;
+}
+
+#wr-app .wr-requester-proposal-empty{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  margin-top:10px;
+  padding:10px 12px;
+  border-radius:8px;
+  background:#f5f8fb;
+  color:#64788b;
+  font-size:.75rem;
+}
+
+#wr-app .wr-requester-suggested-badge{
+  display:inline-flex;
+  align-items:center;
+  gap:4px;
+  margin-top:4px;
+  padding:3px 7px;
+  border-radius:999px;
+  background:#e9f4ff;
+  color:#126495;
+  font-size:.62rem;
+  font-weight:800;
+  white-space:nowrap;
+}
+
+#wr-app .wr-requester-state{
+  display:inline-flex;
+  align-items:center;
+  padding:4px 7px;
+  border-radius:999px;
+  font-size:.63rem;
+  font-weight:800;
+  white-space:nowrap;
+}
+
+#wr-app .wr-requester-state.chosen{
+  background:#ddf4e7;
+  color:#0d7845;
+}
+
+#wr-app .wr-requester-state.available{
+  background:#e9f4ff;
+  color:#126495;
+}
+
+#wr-app .wr-requester-state.unavailable{
+  background:#f1f3f5;
+  color:#6b7782;
+}
+
+#wr-app .wr-supply-selection-box{
+  border-color:#e1e7ed;
+}
+
+#wr-app #wr-stock-table .wr-requester-suggested-badge{
+  margin-left:0;
+}
+
+@media (max-width:720px){
+  #wr-app .wr-requester-proposal-head{
+    flex-direction:column;
+    gap:8px;
+  }
+}
+
+/* ==========================================================================
+   GRUPOMAR · Salidas · Asignación de tina a solicitud 1.0.0
+   ========================================================================== */
+
+#wr-app .wr-outgoing-choice-intro{
+  display:grid;
+  gap:10px;
+}
+
+#wr-app .wr-outgoing-choice-intro > p{
+  margin:0;
+  color:#55697a;
+  font-size:.82rem;
+  line-height:1.45;
+}
+
+#wr-app .wr-outgoing-choice-tub{
+  display:flex;
+  align-items:center;
+  gap:11px;
+  padding:10px 12px;
+  border:1px solid #dce5ed;
+  border-radius:10px;
+  background:#f8fafc;
+}
+
+#wr-app .wr-outgoing-choice-tub > i{
+  display:grid;
+  place-items:center;
+  width:34px;
+  height:34px;
+  border-radius:9px;
+  background:#e7f2fb;
+  color:#17648f;
+  font-size:1rem;
+}
+
+#wr-app .wr-outgoing-choice-tub div{
+  display:grid;
+  gap:1px;
+}
+
+#wr-app .wr-outgoing-choice-tub span{
+  color:#718393;
+  font-size:.62rem;
+  font-weight:800;
+  text-transform:uppercase;
+  letter-spacing:.04em;
+}
+
+#wr-app .wr-outgoing-choice-tub strong{
+  color:#20384a;
+  font-size:.95rem;
+}
+
+#wr-app .wr-outgoing-choice-tub small{
+  color:#627688;
+  font-size:.72rem;
+}
+
+#wr-app .wr-outgoing-choice-warning{
+  display:flex;
+  align-items:flex-start;
+  gap:8px;
+  padding:8px 10px;
+  border-radius:8px;
+  background:#eef6ff;
+  color:#245d7d;
+  font-size:.72rem;
+  line-height:1.4;
+}
+
+#wr-app .wr-outgoing-choice-list{
+  display:grid;
+  gap:8px;
+  margin-top:12px;
+  max-height:min(48vh,440px);
+  overflow:auto;
+  padding-right:3px;
+}
+
+#wr-app .wr-outgoing-choice-card{
+  position:relative;
+  display:grid;
+  grid-template-columns:20px minmax(0,1fr);
+  gap:10px;
+  align-items:flex-start;
+  margin:0;
+  padding:11px 12px;
+  border:1px solid #dbe4ec;
+  border-radius:10px;
+  background:#fff;
+  cursor:pointer;
+  transition:border-color .15s ease,box-shadow .15s ease,background .15s ease;
+}
+
+#wr-app .wr-outgoing-choice-card:hover{
+  border-color:#91b7cf;
+  background:#fbfdff;
+}
+
+#wr-app .wr-outgoing-choice-card:has(input:checked){
+  border-color:#2a779f;
+  box-shadow:0 0 0 2px rgba(42,119,159,.10);
+  background:#f8fcff;
+}
+
+#wr-app .wr-outgoing-choice-card input{
+  position:absolute;
+  opacity:0;
+  pointer-events:none;
+}
+
+#wr-app .wr-outgoing-choice-radio{
+  width:17px;
+  height:17px;
+  margin-top:2px;
+  border:2px solid #9aabb8;
+  border-radius:50%;
+  background:#fff;
+  box-shadow:inset 0 0 0 3px #fff;
+}
+
+#wr-app .wr-outgoing-choice-card:has(input:checked) .wr-outgoing-choice-radio{
+  border-color:#176a96;
+  background:#176a96;
+}
+
+#wr-app .wr-outgoing-choice-main{
+  display:grid;
+  gap:4px;
+  min-width:0;
+}
+
+#wr-app .wr-outgoing-choice-head{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:8px;
+}
+
+#wr-app .wr-outgoing-choice-head strong{
+  color:#20384a;
+  font-size:.84rem;
+}
+
+#wr-app .wr-outgoing-choice-head em{
+  flex:0 0 auto;
+  padding:3px 7px;
+  border-radius:999px;
+  background:#eef3f7;
+  color:#5a6d7d;
+  font-style:normal;
+  font-size:.61rem;
+  font-weight:800;
+}
+
+#wr-app .wr-outgoing-choice-route,
+#wr-app .wr-outgoing-choice-product{
+  color:#607484;
+  font-size:.7rem;
+}
+
+#wr-app .wr-outgoing-choice-metrics{
+  display:flex;
+  flex-wrap:wrap;
+  align-items:center;
+  gap:6px 12px;
+  margin-top:2px;
+}
+
+#wr-app .wr-outgoing-choice-metrics b{
+  color:#0f6b45;
+  font-size:.69rem;
+}
+
+#wr-app .wr-outgoing-choice-metrics small{
+  color:#7a8995;
+  font-size:.66rem;
+}
+
+@media (max-width:620px){
+  #wr-app .wr-outgoing-choice-head{
+    align-items:flex-start;
+    flex-direction:column;
+  }
+}
+

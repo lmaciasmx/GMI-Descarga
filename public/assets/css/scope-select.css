@@ -1,0 +1,313 @@
+@import url("/assets/fonts/manrope/manrope.css");
+
+:root {
+    --gm-scope-navy-950: #071b2f;
+    --gm-scope-navy-900: #0b2942;
+    --gm-scope-navy-800: #123f65;
+    --gm-scope-teal-500: #10c8d8;
+    --gm-scope-teal-600: #0f8fd1;
+    --gm-scope-surface: rgba(255, 255, 255, 0.94);
+    --gm-scope-border: rgba(216, 228, 236, 0.9);
+    --gm-scope-text: #173854;
+    --gm-scope-muted: #667a90;
+    --gm-scope-shadow: 0 24px 60px rgba(9, 34, 55, 0.22);
+}
+
+html,
+body {
+    min-height: 100%;
+}
+
+body.gm-scope-page {
+    margin: 0;
+    min-height: 100vh;
+    font-family: "Manrope", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    color: var(--gm-scope-text);
+    background:
+        linear-gradient(120deg, rgba(7, 27, 47, 0.48) 0%, rgba(10, 39, 64, 0.34) 28%, rgba(12, 53, 84, 0.18) 54%, rgba(14, 68, 104, 0.04) 100%),
+        url("/assets/img/scope/scope-cold-storage.webp") center center / cover no-repeat fixed;
+}
+
+.gm-scope-shell {
+    position: relative;
+    min-height: 100vh;
+    display: grid;
+    place-items: center;
+    padding: 24px;
+    overflow: hidden;
+}
+
+.gm-scope-overlay {
+    position: absolute;
+    inset: 0;
+    background:
+        radial-gradient(circle at right top, rgba(255,255,255,0.14) 0%, rgba(255,255,255,0) 34%),
+        radial-gradient(circle at left bottom, rgba(16, 200, 216, 0.05) 0%, rgba(16, 200, 216, 0) 35%);
+    pointer-events: none;
+}
+
+.gm-scope-card {
+    position: relative;
+    z-index: 1;
+    width: min(100%, 760px);
+    padding: 34px 42px 30px;
+    border: 1px solid var(--gm-scope-border);
+    border-radius: 28px;
+    background: var(--gm-scope-surface);
+    backdrop-filter: blur(8px);
+    box-shadow: var(--gm-scope-shadow);
+}
+
+.gm-scope-header {
+    margin-bottom: 22px;
+}
+
+.gm-scope-brand {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 16px;
+}
+
+.gm-scope-brand__mark {
+    width: 58px;
+    height: 58px;
+    border-radius: 18px;
+    background: linear-gradient(135deg, #13c7d7 0%, #0f8fcf 100%);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 10px 24px rgba(16, 160, 203, 0.28);
+}
+
+.gm-scope-brand__mark span {
+    color: #062239;
+    font-weight: 900;
+    font-size: 22px;
+    letter-spacing: 0.02em;
+}
+
+.gm-scope-brand__copy {
+    display: grid;
+    gap: 4px;
+}
+
+.gm-scope-brand__name {
+    font-size: 1.85rem;
+    line-height: 1;
+    font-weight: 900;
+    color: #0b2b4a;
+    letter-spacing: -0.03em;
+}
+
+.gm-scope-brand__tag {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: #58708a;
+}
+
+.gm-scope-header__line {
+    display: inline-block;
+    width: 62px;
+    height: 4px;
+    margin-bottom: 20px;
+    border-radius: 999px;
+    background: linear-gradient(90deg, #0fc9d9 0%, #22e0ee 100%);
+}
+
+.gm-scope-header__compact {
+    display: grid;
+    gap: 10px;
+    margin-top: 2px;
+}
+
+.gm-scope-header__compact p {
+    margin: 0;
+    color: var(--gm-scope-muted);
+    font-size: 0.98rem;
+    line-height: 1.45;
+    font-weight: 600;
+}
+
+.gm-scope-alert,
+.gm-scope-empty {
+    margin-bottom: 20px;
+    border-radius: 18px;
+    font-size: 0.98rem;
+}
+
+.gm-scope-form {
+    margin-top: 4px;
+}
+
+.gm-scope-label {
+    display: block;
+    margin-bottom: 12px;
+    color: #38536e;
+    font-size: 0.9rem;
+    font-weight: 800;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+}
+
+.gm-scope-select-wrap {
+    margin-bottom: 22px;
+}
+
+.gm-scope-select {
+    min-height: 62px;
+    border-radius: 16px;
+    border: 1px solid #c8d6e0;
+    background-color: #ffffff;
+    color: #1b3955;
+    font-size: 1.02rem;
+    font-weight: 600;
+    padding-left: 18px;
+    padding-right: 52px;
+    box-shadow: 0 3px 14px rgba(18, 63, 101, 0.04);
+}
+
+.gm-scope-select:focus {
+    border-color: #39c7da;
+    box-shadow:
+        0 0 0 0.22rem rgba(16, 200, 216, 0.18),
+        0 10px 24px rgba(16, 144, 198, 0.10);
+}
+
+.gm-scope-submit {
+    width: 100%;
+    min-height: 62px;
+    padding: 0 24px;
+    border: 0;
+    border-radius: 18px;
+    background: linear-gradient(90deg, #0a3f74 0%, #0f8fd1 100%);
+    color: #ffffff;
+    font-size: 1.14rem;
+    font-weight: 800;
+    letter-spacing: -0.01em;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 14px;
+    box-shadow: 0 16px 34px rgba(13, 73, 119, 0.24);
+    transition: transform 0.18s ease, box-shadow 0.18s ease, filter 0.18s ease;
+}
+
+.gm-scope-submit:hover,
+.gm-scope-submit:focus {
+    transform: translateY(-1px);
+    filter: saturate(1.04) brightness(1.02);
+    box-shadow: 0 20px 38px rgba(13, 73, 119, 0.27);
+    color: #ffffff;
+}
+
+.gm-scope-submit__arrow {
+    font-size: 1.35rem;
+    line-height: 1;
+}
+
+.gm-scope-footer {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    align-items: center;
+    gap: 12px;
+    margin-top: 24px;
+    padding-top: 16px;
+}
+
+.gm-scope-footer__line {
+    height: 1px;
+    background: linear-gradient(90deg, rgba(31, 66, 92, 0), rgba(31, 66, 92, 0.22), rgba(31, 66, 92, 0));
+}
+
+.gm-scope-footer__icon {
+    color: #8ca5b9;
+    font-size: 0.96rem;
+}
+
+.gm-scope-footer p {
+    grid-column: 1 / -1;
+    margin: 0;
+    text-align: center;
+    color: #6a7f93;
+    font-size: 0.86rem;
+    font-weight: 700;
+    letter-spacing: 0.17em;
+    text-transform: uppercase;
+}
+
+@media (max-width: 991.98px) {
+    body.gm-scope-page {
+        background-attachment: scroll;
+        background-position: 58% center;
+    }
+
+    .gm-scope-card {
+        width: min(100%, 720px);
+    }
+}
+
+@media (max-width: 767.98px) {
+    .gm-scope-shell {
+        padding: 18px;
+    }
+
+    .gm-scope-card {
+        padding: 28px 22px 24px;
+        border-radius: 22px;
+    }
+
+    .gm-scope-brand {
+        gap: 14px;
+        margin-bottom: 14px;
+    }
+
+    .gm-scope-brand__mark {
+        width: 52px;
+        height: 52px;
+        border-radius: 16px;
+    }
+
+    .gm-scope-brand__mark span {
+        font-size: 20px;
+    }
+
+    .gm-scope-brand__name {
+        font-size: 1.55rem;
+    }
+
+    .gm-scope-brand__tag {
+        font-size: 0.88rem;
+    }
+
+    .gm-scope-header__line {
+        width: 54px;
+        margin-bottom: 16px;
+    }
+
+    .gm-scope-header__compact p {
+        font-size: 0.92rem;
+        line-height: 1.45;
+    }
+
+    .gm-scope-label {
+        font-size: 0.8rem;
+        letter-spacing: 0.1em;
+    }
+
+    .gm-scope-select,
+    .gm-scope-submit {
+        min-height: 58px;
+        font-size: 1rem;
+    }
+
+    .gm-scope-footer {
+        margin-top: 24px;
+        padding-top: 16px;
+    }
+
+    .gm-scope-footer p {
+        font-size: 0.78rem;
+        letter-spacing: 0.12em;
+    }
+}

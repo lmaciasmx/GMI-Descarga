@@ -1,0 +1,1051 @@
+/*
+ * GRUPOMAR · Entrada a Frigorífico 1.0.0
+ * Capa visual específica. No reemplaza warehouse-station.css.
+ */
+
+.warehouse-station-shell .warehouse-station-topbar {
+    min-height: 68px;
+}
+
+.warehouse-entry-device-strip {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.warehouse-entry-device {
+    min-width: 118px;
+    height: 47px;
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    padding: 7px 10px;
+    border: 1px solid #dbe5ec;
+    border-radius: 11px;
+    background: #f9fbfd;
+    color: #153b58;
+}
+
+.warehouse-entry-device > i {
+    flex: 0 0 auto;
+    color: #145d8a;
+    font-size: 1rem;
+}
+
+.warehouse-entry-device-copy {
+    min-width: 0;
+    display: grid;
+    line-height: 1.05;
+}
+
+.warehouse-entry-device-copy > strong {
+    max-width: 140px;
+    overflow: hidden;
+    color: #284b66;
+    font-size: .68rem;
+    font-weight: 800;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+.warehouse-entry-device .ws-status-pill {
+    min-height: auto;
+    display: inline-flex;
+    justify-content: flex-start;
+    gap: 5px;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    color: #6f8291;
+    font-size: .61rem;
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+.warehouse-entry-device .ws-status-pill.online {
+    color: #15845f;
+}
+
+.warehouse-entry-device .ws-status-pill.warning {
+    color: #b36d11;
+}
+
+.warehouse-entry-device .ws-status-pill.error,
+.warehouse-entry-device .ws-status-pill.offline {
+    color: #c33f49;
+}
+
+.warehouse-entry-device .status-dot {
+    width: 7px;
+    height: 7px;
+}
+
+.ws-plan-card-redesign .ws-card-body {
+    padding: 14px 15px 15px;
+}
+
+.ws-plan-head-redesign {
+    display: grid;
+    grid-template-columns: minmax(250px, .85fr) minmax(420px, 1.15fr);
+    align-items: center;
+    gap: 18px;
+}
+
+.ws-plan-title-redesign {
+    min-width: 0;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.ws-plan-title-icon {
+    width: 38px;
+    height: 38px;
+    flex: 0 0 auto;
+    display: grid;
+    place-items: center;
+    border-radius: 10px;
+    background: #ebf5fc;
+    color: #0f76b9;
+    font-size: 1.05rem;
+}
+
+.ws-plan-title-redesign h2 {
+    margin: 0;
+    color: #153b58;
+    font-size: 1rem;
+    font-weight: 850;
+}
+
+.ws-plan-title-redesign .ws-plan-identity {
+    margin-top: 3px;
+    overflow: hidden;
+    color: #7b8f9f;
+    font-size: .69rem;
+    font-weight: 600;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+.ws-plan-select-redesign .form-select {
+    min-height: 44px;
+    border-color: #ccdbe6;
+    border-radius: 10px;
+    color: #173b58;
+    font-weight: 650;
+}
+
+.ws-plan-metrics-redesign {
+    display: grid !important;
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+    gap: 12px !important;
+    margin-top: 12px;
+}
+
+.ws-plan-metric-redesign {
+    min-height: 72px;
+    display: flex !important;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 14px !important;
+    border: 0 !important;
+    border-radius: 11px !important;
+}
+
+.ws-plan-metric-planned {
+    background: linear-gradient(100deg, #eef7ff, #e8f3fc) !important;
+}
+
+.ws-plan-metric-processed {
+    background: linear-gradient(100deg, #eefaf6, #e6f6f1) !important;
+}
+
+.ws-plan-metric-pending {
+    background: linear-gradient(100deg, #fff8ee, #fff2e4) !important;
+}
+
+.ws-plan-metric-icon {
+    width: 38px;
+    height: 38px;
+    flex: 0 0 auto;
+    display: grid;
+    place-items: center;
+    border: 1px solid currentColor;
+    border-radius: 50%;
+    font-size: .95rem;
+}
+
+.ws-plan-metric-planned .ws-plan-metric-icon {
+    color: #137bc0;
+}
+
+.ws-plan-metric-processed .ws-plan-metric-icon {
+    color: #15956c;
+}
+
+.ws-plan-metric-pending .ws-plan-metric-icon {
+    color: #dc850f;
+}
+
+.ws-plan-metric-copy {
+    min-width: 0;
+    display: grid;
+    gap: 2px;
+}
+
+.ws-plan-metric-copy > span {
+    color: #34546b;
+    font-size: .68rem;
+    font-weight: 800;
+}
+
+.ws-plan-metric-copy > strong {
+    color: #123653;
+    font-size: 1rem;
+    font-weight: 850;
+}
+
+.ws-card-header-single {
+    min-height: 46px;
+    align-items: center !important;
+}
+
+.ws-card-header-single h2 {
+    margin: 0;
+    white-space: nowrap;
+}
+
+.ws-tare-input-group .input-group-text {
+    color: #234d6a;
+}
+
+#entryTareInput {
+    font-weight: 800;
+    color: #173b58;
+}
+
+#entryTareInput.ws-tare-overridden {
+    border-color: #d88b1c;
+    background: #fffaf1;
+    box-shadow: 0 0 0 .15rem rgba(216, 139, 28, .10);
+}
+
+.ws-tare-edit-state {
+    min-height: 15px;
+    display: block;
+    margin-top: 3px;
+    color: #b06c10;
+    font-size: .58rem;
+    font-weight: 700;
+}
+
+.ws-main-grid {
+    align-items: stretch;
+}
+
+.ws-main-grid > div {
+    display: grid;
+    align-content: start;
+    gap: 12px;
+}
+
+.ws-main-grid > div > .ws-card {
+    margin: 0 !important;
+}
+
+.ws-scale-card {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.ws-scale-card .ws-scale-top {
+    padding-top: 14px;
+}
+
+.ws-scale-card .ws-scale-reading strong {
+    letter-spacing: -.045em;
+}
+
+.ws-scale-card .ws-scale-actions {
+    margin-top: auto;
+}
+
+#entryTubSelected {
+    display: none !important;
+}
+
+@media (max-width: 1360px) {
+    .warehouse-entry-device {
+        min-width: 104px;
+        padding-inline: 8px;
+    }
+
+    .warehouse-entry-device-copy > strong {
+        max-width: 115px;
+    }
+}
+
+@media (max-width: 1180px) {
+    .warehouse-entry-device-communication {
+        display: none;
+    }
+
+    .ws-plan-head-redesign {
+        grid-template-columns: minmax(220px, .75fr) minmax(360px, 1.25fr);
+    }
+}
+
+@media (max-width: 900px) {
+    .warehouse-entry-device-strip {
+        display: none;
+    }
+
+    .ws-plan-head-redesign {
+        grid-template-columns: 1fr;
+        gap: 10px;
+    }
+
+    .ws-plan-metrics-redesign {
+        grid-template-columns: 1fr !important;
+    }
+}
+
+
+/* 1.0.1: functional device statuses remain inside the scale card for the
+   original operational JS; the top bar shows mirrored visual statuses. */
+.ws-status-row-functional {
+    position: absolute !important;
+    width: 1px !important;
+    height: 1px !important;
+    margin: -1px !important;
+    padding: 0 !important;
+    overflow: hidden !important;
+    clip: rect(0 0 0 0) !important;
+    clip-path: inset(50%) !important;
+    white-space: nowrap !important;
+    border: 0 !important;
+}
+
+.ws-plan-metric-icon {
+    position: static !important;
+    inset: auto !important;
+    width: 38px !important;
+    height: 38px !important;
+    min-width: 38px !important;
+    min-height: 38px !important;
+    display: grid !important;
+    place-items: center !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    line-height: 1 !important;
+}
+
+.ws-plan-metric-icon i,
+.ws-plan-metric-icon .bi {
+    position: static !important;
+    inset: auto !important;
+    display: inline-block !important;
+    width: auto !important;
+    height: auto !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    font-size: 1rem !important;
+    line-height: 1 !important;
+    transform: none !important;
+}
+
+.ws-plan-metric-copy {
+    position: static !important;
+    min-width: 0 !important;
+    display: grid !important;
+    gap: 2px !important;
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+.ws-plan-metric-copy > span {
+    position: static !important;
+    inset: auto !important;
+    display: block !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    line-height: 1.15 !important;
+}
+
+
+/* ==========================================================================
+   GRUPOMAR · Entrada a Frigorífico · Pantalla 1 · UI 1.1.1
+   Implementación fiel al mockup aprobado.
+   IMPORTANTE: no reordena los inputs de Tina y producto.
+   ========================================================================== */
+
+/* Plan compacto: título a la izquierda; selector + detalle a la derecha. */
+.ws-plan-card-redesign .ws-card-body {
+    padding: 14px 15px;
+}
+
+.ws-plan-head-redesign {
+    grid-template-columns: minmax(360px, .92fr) minmax(560px, 1.08fr);
+    gap: 18px;
+}
+
+.ws-plan-controls-redesign {
+    min-width: 0;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 10px;
+}
+
+.ws-plan-detail-btn {
+    min-width: 182px;
+    min-height: 44px;
+    border-radius: 10px;
+    font-size: .76rem;
+    font-weight: 800;
+    white-space: nowrap;
+}
+
+/* En esta fase el botón todavía no abre modal, pero visualmente conserva
+   la referencia aprobada. */
+.ws-plan-detail-btn:disabled,
+.ws-plan-detail-btn.disabled {
+    opacity: 1;
+    color: #0d6efd;
+    border-color: #0d6efd;
+    background: #fff;
+}
+
+/* Estos IDs siguen vivos para warehouse-entry.js.
+   Únicamente dejan de ocupar espacio en la estación principal. */
+.ws-plan-card-redesign .ws-plan-metrics-functional {
+    display: none !important;
+}
+
+/*
+ * NO SE CAMBIA la grilla de Tina y producto.
+ * Se conserva exactamente:
+ * Fila 1: Tina | Especie | Talla
+ * Fila 2: Tara | Tanque del plan | Tanques del producto
+ * Fila 3: Sorteador | Etiquetador
+ */
+
+/* La báscula conserva la altura de las dos cards de la izquierda. */
+.ws-main-grid {
+    align-items: stretch;
+}
+
+.ws-main-grid > div {
+    display: grid;
+    align-content: start;
+    gap: 12px;
+}
+
+.ws-main-grid > div > .ws-card {
+    margin: 0 !important;
+}
+
+.ws-scale-card {
+    height: 100%;
+}
+
+.ws-scale-card .ws-scale-actions {
+    margin-top: auto;
+    padding-bottom: 16px;
+}
+
+/* Barra inferior flotante debajo de AMBAS columnas, como el mockup. */
+.ws-page-actions {
+    position: sticky;
+    bottom: 0;
+    z-index: 5;
+    display: grid;
+    grid-template-columns: minmax(220px, 300px) minmax(0, 1fr);
+    gap: 14px;
+    margin-top: 12px;
+    padding: 10px;
+    border: 1px solid #dbe3ec;
+    border-radius: 14px;
+    background: rgba(255, 255, 255, .97);
+    box-shadow: 0 10px 26px rgba(27, 50, 72, .11);
+    backdrop-filter: blur(10px);
+}
+
+.ws-page-actions .ws-clear-btn,
+.ws-page-actions .ws-confirm-btn {
+    min-height: 54px;
+    border-radius: 9px;
+    font-size: .9rem;
+    font-weight: 850;
+}
+
+.ws-page-actions .ws-clear-btn {
+    border: 1px solid #cbd7e2;
+    background: #f5f8fb;
+    color: #17324d;
+}
+
+.ws-page-actions .ws-clear-btn:hover {
+    background: #edf3f8;
+    color: #17324d;
+}
+
+.ws-page-actions .ws-confirm-btn {
+    width: 100%;
+    box-shadow: 0 6px 16px rgba(25, 135, 84, .16);
+}
+
+/* Ajustes pequeños para acercarse al mockup sin mover campos. */
+#entryObservations {
+    min-height: 58px;
+    resize: vertical;
+}
+
+.ws-card-header-single h2 {
+    white-space: nowrap;
+}
+
+@media (max-width: 1180px) {
+    .ws-plan-head-redesign {
+        grid-template-columns: minmax(280px, .8fr) minmax(470px, 1.2fr);
+    }
+
+    .ws-page-actions {
+        grid-template-columns: minmax(190px, 250px) minmax(0, 1fr);
+    }
+}
+
+@media (max-width: 900px) {
+    .ws-plan-head-redesign {
+        grid-template-columns: 1fr;
+    }
+
+    .ws-plan-controls-redesign {
+        grid-template-columns: minmax(0, 1fr) auto;
+    }
+}
+
+@media (max-width: 760px) {
+    .ws-plan-controls-redesign,
+    .ws-page-actions {
+        grid-template-columns: 1fr;
+    }
+
+    .ws-plan-detail-btn {
+        width: 100%;
+    }
+}
+
+
+/* ==========================================================================
+   GRUPOMAR · Entrada a Frigorífico · Modal Detalle del Plan · UI 1.2.0
+   Referencia visual: REFERENCIA_MODAL_RESUMEN.png / REFERENCIA_MODAL_TINAS.png
+   ========================================================================== */
+
+.ws-plan-detail-modal .modal-dialog {
+    max-width: 960px;
+}
+
+.ws-plan-detail-modal .modal-content {
+    overflow: hidden;
+    border: 0;
+    border-radius: 15px;
+    background: #fff;
+    box-shadow: 0 24px 65px rgba(18, 47, 74, .24);
+}
+
+.ws-plan-detail-modal-header {
+    min-height: 80px;
+    padding: 15px 18px 13px;
+    border-bottom: 1px solid #dce5ef;
+    background: #fff;
+}
+
+.ws-plan-detail-heading {
+    display: flex;
+    align-items: center;
+    gap: 11px;
+    min-width: 0;
+}
+
+.ws-plan-detail-heading-icon {
+    width: 45px;
+    height: 45px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex: 0 0 45px;
+    border-radius: 11px;
+    background: #edf6ff;
+    color: #0874e7;
+    font-size: 1.25rem;
+}
+
+.ws-plan-detail-heading h2 {
+    margin: 0;
+    color: #102f53;
+    font-size: 1.23rem;
+    font-weight: 850;
+    line-height: 1.15;
+}
+
+.ws-plan-detail-subtitle {
+    margin-top: 4px;
+    color: #315f95;
+    font-size: .86rem;
+    font-weight: 620;
+}
+
+.ws-plan-detail-modal-body {
+    padding: 12px 14px 10px;
+    background: #fff;
+}
+
+.ws-plan-detail-loading {
+    min-height: 320px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    color: #56728f;
+    font-weight: 700;
+}
+
+.ws-plan-modal-section {
+    overflow: hidden;
+    margin-bottom: 11px;
+    border: 1px solid #d8e4ef;
+    border-radius: 11px;
+    background: #fff;
+}
+
+.ws-plan-modal-section-title {
+    min-height: 41px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 14px;
+    border-bottom: 1px solid #d8e4ef;
+    background: linear-gradient(180deg, #f7fbff 0%, #f2f7fc 100%);
+    color: #173d68;
+    font-size: .82rem;
+    font-weight: 850;
+}
+
+.ws-plan-modal-section-title i {
+    color: #0d75e7;
+    font-size: 1rem;
+}
+
+.ws-plan-general-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    padding: 2px 10px 4px;
+}
+
+.ws-plan-general-item {
+    min-width: 0;
+    min-height: 61px;
+    display: flex;
+    align-items: center;
+    gap: 11px;
+    padding: 9px 12px;
+    border-right: 1px solid #e3ebf3;
+    border-bottom: 1px solid #e3ebf3;
+}
+
+.ws-plan-general-item:nth-child(3) {
+    border-right: 0;
+}
+
+.ws-plan-general-item:nth-child(n+4) {
+    border-bottom: 0;
+}
+
+.ws-plan-general-wide {
+    grid-column: span 2;
+}
+
+.ws-plan-general-item > i {
+    width: 25px;
+    flex: 0 0 25px;
+    color: #0874e7;
+    font-size: 1.14rem;
+    text-align: center;
+}
+
+.ws-plan-general-item div {
+    min-width: 0;
+}
+
+.ws-plan-general-item span:not(.ws-plan-state-pill) {
+    display: block;
+    color: #536f8e;
+    font-size: .66rem;
+    font-weight: 650;
+    line-height: 1.15;
+}
+
+.ws-plan-general-item strong {
+    display: block;
+    margin-top: 2px;
+    overflow: hidden;
+    color: #17355a;
+    font-size: .82rem;
+    font-weight: 800;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.ws-plan-state-pill {
+    display: inline-flex !important;
+    align-items: center;
+    min-height: 25px;
+    padding: 3px 12px;
+    border-radius: 999px;
+    background: #dceeff;
+    color: #0872dd;
+    font-size: .69rem !important;
+    font-weight: 850 !important;
+}
+
+.ws-plan-state-pill::before {
+    content: "";
+    width: 6px;
+    height: 6px;
+    margin-right: 6px;
+    border-radius: 50%;
+    background: currentColor;
+}
+
+.ws-plan-progress-row {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 65px;
+    align-items: center;
+    gap: 12px;
+    padding: 11px 14px 4px;
+}
+
+.ws-plan-modal-progress {
+    height: 17px;
+    overflow: hidden;
+    border-radius: 999px;
+    background: #dfe8f1;
+}
+
+.ws-plan-modal-progress .progress-bar {
+    border-radius: 999px;
+    background: #0876e8;
+}
+
+.ws-plan-progress-row > strong {
+    color: #0871df;
+    font-size: 1rem;
+    font-weight: 900;
+    text-align: right;
+}
+
+.ws-plan-modal-metrics {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 10px;
+    padding: 7px 12px 12px;
+}
+
+.ws-plan-modal-metric {
+    min-width: 0;
+    min-height: 70px;
+    display: flex;
+    align-items: center;
+    gap: 11px;
+    padding: 9px 12px;
+    border-radius: 10px;
+    background: #eef6ff;
+}
+
+.ws-plan-modal-metric > i {
+    width: 31px;
+    flex: 0 0 31px;
+    font-size: 1.35rem;
+    text-align: center;
+}
+
+.ws-plan-modal-metric div {
+    min-width: 0;
+}
+
+.ws-plan-modal-metric span {
+    display: block;
+    color: #4e6782;
+    font-size: .66rem;
+    line-height: 1.1;
+}
+
+.ws-plan-modal-metric strong {
+    display: block;
+    margin-top: 4px;
+    color: #133b69;
+    font-size: .98rem;
+    font-weight: 900;
+    white-space: nowrap;
+}
+
+.ws-plan-modal-metric.planned > i,
+.ws-plan-modal-metric.progress-metric > i {
+    color: #0874e7;
+}
+
+.ws-plan-modal-metric.processed {
+    background: #edf9f4;
+}
+
+.ws-plan-modal-metric.processed > i {
+    color: #149466;
+}
+
+.ws-plan-modal-metric.pending {
+    background: #fff5e9;
+}
+
+.ws-plan-modal-metric.pending > i,
+.ws-plan-modal-metric.pending strong {
+    color: #ef7b12;
+}
+
+.ws-plan-modal-tabs {
+    min-height: 45px;
+    display: flex;
+    align-items: end;
+    gap: 2px;
+    margin-top: 2px;
+    border: 1px solid #d8e4ef;
+    border-bottom: 0;
+    border-radius: 10px 10px 0 0;
+    background: linear-gradient(180deg, #f7fbff 0%, #f2f7fc 100%);
+    padding: 0 10px;
+}
+
+.ws-plan-modal-tab {
+    min-height: 44px;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 0 11px;
+    border: 0;
+    border-bottom: 2px solid transparent;
+    background: transparent;
+    color: #355979;
+    font-size: .78rem;
+    font-weight: 760;
+}
+
+.ws-plan-modal-tab.active {
+    border-bottom-color: #0d6efd;
+    color: #0d6efd;
+    font-weight: 900;
+}
+
+.ws-plan-modal-tab-panel {
+    border: 1px solid #d8e4ef;
+    border-top: 0;
+    border-radius: 0 0 10px 10px;
+    background: #fff;
+}
+
+.ws-plan-detail-table-wrap,
+.ws-plan-tubs-scroll {
+    overflow: auto;
+}
+
+.ws-plan-detail-table-wrap {
+    max-height: 245px;
+}
+
+.ws-plan-tubs-scroll {
+    max-height: 330px;
+}
+
+.ws-plan-detail-table,
+.ws-plan-tubs-table {
+    table-layout: auto;
+    color: #284c70;
+    font-size: .72rem;
+}
+
+.ws-plan-detail-table thead th,
+.ws-plan-tubs-table thead th {
+    position: sticky;
+    top: 0;
+    z-index: 2;
+    padding: 9px 10px;
+    border-bottom: 1px solid #d8e4ef;
+    background: #f8fbfe;
+    color: #45617e;
+    font-size: .66rem;
+    font-weight: 850;
+    white-space: nowrap;
+}
+
+.ws-plan-detail-table tbody td,
+.ws-plan-tubs-table tbody td {
+    padding: 8px 10px;
+    border-color: #e6edf4;
+    vertical-align: middle;
+}
+
+.ws-plan-product-name {
+    color: #1c4774;
+    font-weight: 780;
+    white-space: nowrap;
+}
+
+.ws-plan-product-name i {
+    margin-right: 6px;
+    color: #183f70;
+}
+
+.ws-plan-pending-value {
+    color: #ef7b12;
+    font-weight: 900;
+}
+
+.ws-plan-modal-summary-footer {
+    min-height: 49px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
+    padding: 9px 13px;
+    border-top: 1px solid #e2eaf2;
+    color: #56738f;
+    font-size: .72rem;
+}
+
+.ws-plan-modal-summary-footer i {
+    margin-right: 7px;
+    color: #0874e7;
+    font-size: .98rem;
+}
+
+.ws-plan-cancel-note {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    margin: 12px 12px 10px;
+    padding: 9px 12px;
+    border: 1px solid #cce4ff;
+    border-radius: 9px;
+    background: #edf7ff;
+    color: #1670c7;
+    font-size: .7rem;
+    font-weight: 650;
+}
+
+.ws-plan-cancel-note i {
+    font-size: .95rem;
+}
+
+.ws-destination-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    min-height: 24px;
+    padding: 3px 8px;
+    border-radius: 999px;
+    font-size: .63rem;
+    font-weight: 820;
+    white-space: nowrap;
+}
+
+.ws-destination-badge.pending {
+    background: #fff0e8;
+    color: #e05238;
+}
+
+.ws-destination-badge.placed {
+    background: #e5f7ee;
+    color: #159463;
+}
+
+.ws-destination-badge.blocked {
+    background: #eef2f6;
+    color: #65798b;
+}
+
+.ws-plan-cancel-btn,
+.ws-plan-not-cancelable {
+    min-height: 29px;
+    padding: 4px 8px;
+    border-radius: 7px;
+    font-size: .62rem;
+    font-weight: 800;
+    white-space: nowrap;
+}
+
+.ws-plan-not-cancelable {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    border: 1px solid #dbe3eb;
+    background: #f2f5f8;
+    color: #778899;
+}
+
+.ws-plan-detail-modal-footer {
+    min-height: 57px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 10px 14px;
+    border-top: 1px solid #dce5ef;
+    background: #fff;
+}
+
+.ws-plan-modal-footer-count {
+    color: #456683;
+    font-size: .75rem;
+}
+
+.ws-plan-modal-footer-count i {
+    margin-right: 7px;
+    color: #0874e7;
+    font-size: .98rem;
+}
+
+.ws-plan-modal-footer-actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.ws-plan-modal-footer-actions .btn {
+    min-height: 36px;
+    border-radius: 8px;
+    font-size: .7rem;
+    font-weight: 800;
+}
+
+@media (max-width: 900px) {
+    .ws-plan-detail-modal .modal-dialog {
+        max-width: calc(100% - 20px);
+        margin: 10px auto;
+    }
+
+    .ws-plan-general-grid {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .ws-plan-general-item:nth-child(3) {
+        border-right: 1px solid #e3ebf3;
+    }
+
+    .ws-plan-general-wide {
+        grid-column: span 1;
+    }
+
+    .ws-plan-modal-metrics {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}

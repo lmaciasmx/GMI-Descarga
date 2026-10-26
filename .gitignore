@@ -1,0 +1,55 @@
+# Dependencias
+/vendor/
+/node_modules/
+
+# Configuraciones privadas
+.env
+.env.*
+!.env.example
+
+**/.env
+**/.env.*
+!**/.env.example
+
+# Archivos operativos CodeIgniter
+/writable/cache/*
+/writable/debugbar/*
+/writable/logs/*
+/writable/session/*
+/writable/uploads/*
+/writable/labels/*
+
+!/writable/.gitkeep
+!/writable/cache/.gitkeep
+!/writable/debugbar/.gitkeep
+!/writable/logs/.gitkeep
+!/writable/session/.gitkeep
+!/writable/uploads/.gitkeep
+!/writable/labels/.gitkeep
+
+# Assets generados
+/public/vendor/*
+!/public/vendor/.gitkeep
+
+# Respaldos
+/backup-*/
+/_backups/
+/backups/
+/backup/
+
+# Archivos temporales y locales
+*.log
+*.zip
+*.sql
+*.sql.gz
+*.bak
+*.tmp
+
+# Configuración local de pruebas
+phpunit.xml
+
+# Editor y sistema operativo
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db

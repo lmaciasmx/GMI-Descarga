@@ -1,0 +1,7 @@
+.printer-master-hero{background:linear-gradient(135deg,#0b2942,#123f63);border-radius:18px;padding:22px 24px;color:#fff;box-shadow:0 10px 30px rgba(11,41,66,.16)}
+.printer-master-kicker{display:inline-flex;gap:.45rem;align-items:center;font-size:.78rem;text-transform:uppercase;letter-spacing:.08em;font-weight:700;color:#b9d7ea;margin-bottom:.5rem}
+.printer-master-hero h2{font-size:1.3rem;margin:0 0 .4rem}.printer-master-hero p{margin:0;max-width:900px;color:#d9e8f2}
+.printer-master-flow{display:flex;align-items:center;gap:.65rem;flex-wrap:wrap;margin-top:1rem;font-size:.88rem}.printer-master-flow span,.printer-master-flow strong{background:rgba(255,255,255,.1);padding:.42rem .65rem;border-radius:8px}.printer-master-flow strong{background:#fff;color:#0b2942}
+.printer-help{display:flex;gap:.7rem;background:#f5f9fc;border:1px solid #d7e5ef;border-radius:12px;padding:12px 14px;color:#304f65;font-size:.88rem}.printer-help i{font-size:1.1rem;color:#0b6fa4;margin-top:.05rem}
+[data-printer-mode][hidden]{display:none!important}
+@media(max-width:767.98px){.printer-master-hero{padding:18px}.printer-master-flow i{display:none}.printer-master-flow{gap:.4rem}}

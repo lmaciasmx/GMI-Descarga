@@ -1,0 +1,1144 @@
+/* GRUPOMAR · Solicitudes / Venta a cliente 1.0.5
+   Ajuste exacto acordado:
+   1) Los tres tipos de solicitud comparten el MISMO estilo azul.
+   2) Sólo "Solicitudes registradas" usa verde.
+   3) Selector superior alineado exactamente con las columnas Captura / Resumen.
+   4) Venta: Almacén + Cliente en la primera fila; Fecha en segunda fila.
+   5) Cliente con búsqueda y alta rápida. */
+
+/* La barra superior usa la misma asimetría que las cards inferiores. */
+#wr-app .wr-switchboard.wr-switchboard-clean,
+#wr-app #wr-capture-view > .wr-layout-grid{
+  display:grid !important;
+  grid-template-columns:minmax(0,1fr) 330px !important;
+  gap:16px !important;
+  align-items:start !important;
+}
+
+#wr-app .wr-switchboard.wr-switchboard-clean{
+  margin-bottom:16px !important;
+}
+
+#wr-app .wr-switchboard-clean .wr-request-types{
+  display:grid !important;
+  grid-template-columns:repeat(3,minmax(0,1fr)) !important;
+  gap:0 !important;
+  width:100% !important;
+  min-width:0 !important;
+  overflow:hidden !important;
+  border:1px solid #cbdbea;
+  border-radius:10px;
+  background:#fff;
+}
+
+#wr-app .wr-switchboard-clean .wr-request-types .wr-segment-btn{
+  width:100% !important;
+  min-width:0 !important;
+  min-height:46px !important;
+  border:0 !important;
+  border-right:1px solid #dbe4ed !important;
+  border-radius:0 !important;
+  background:#fff !important;
+  color:#163d63 !important;
+  font-weight:700 !important;
+  justify-content:center !important;
+  white-space:nowrap !important;
+}
+
+#wr-app .wr-switchboard-clean .wr-request-types .wr-segment-btn:last-child{
+  border-right:0 !important;
+}
+
+/* LOS TRES usan exactamente el mismo azul cuando están activos. */
+#wr-app .wr-switchboard-clean .wr-request-types .wr-segment-btn.active{
+  background:#1877e8 !important;
+  color:#fff !important;
+}
+
+#wr-app .wr-switchboard-clean .wr-request-types .wr-segment-btn.active i{
+  color:#fff !important;
+}
+
+#wr-app .wr-switchboard-clean .wr-request-types .wr-segment-btn:not(.active) i{
+  color:#163d63 !important;
+}
+
+/* ÚNICO botón verde: vista de solicitudes registradas. */
+#wr-app .wr-registered-action{
+  width:100% !important;
+  min-width:0 !important;
+  max-width:none !important;
+  min-height:46px !important;
+  display:flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  gap:6px !important;
+  padding:0 12px !important;
+  border:1px solid #198754 !important;
+  border-radius:10px !important;
+  background:#198754 !important;
+  color:#fff !important;
+  font-size:.80rem !important;
+  font-weight:700 !important;
+  white-space:nowrap !important;
+  box-shadow:none !important;
+}
+
+#wr-app .wr-registered-action i{
+  color:#fff !important;
+}
+
+#wr-app .wr-registered-action:hover,
+#wr-app .wr-registered-action.active{
+  background:#157347 !important;
+  border-color:#146c43 !important;
+  color:#fff !important;
+}
+
+/* VENTA A CLIENTE: primera fila Almacén + Cliente. */
+#wr-app #wr-create.wr-sale-mode .wr-general-grid{
+  display:grid !important;
+  grid-template-columns:minmax(260px,.85fr) minmax(430px,1.75fr) !important;
+  gap:14px !important;
+  align-items:end !important;
+}
+
+#wr-app #wr-create.wr-sale-mode #wr-sale-origin-group{
+  grid-column:1 !important;
+  grid-row:1 !important;
+}
+
+#wr-app #wr-create.wr-sale-mode #wr-customer-group{
+  grid-column:2 !important;
+  grid-row:1 !important;
+}
+
+#wr-app #wr-create.wr-sale-mode .wr-general-required{
+  grid-column:1 !important;
+  grid-row:2 !important;
+  width:100% !important;
+  max-width:330px !important;
+}
+
+#wr-app #wr-create.wr-sale-mode .wr-general-observations{
+  grid-column:1 / -1 !important;
+  grid-row:3 !important;
+}
+
+#wr-app #wr-create.wr-sale-mode #wr-sale-origin{
+  min-height:38px;
+  font-size:.90rem;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+}
+
+/* Buscador de cliente */
+#wr-app .wr-customer-picker{
+  display:grid;
+  grid-template-columns:minmax(0,1fr) auto;
+  gap:8px;
+  align-items:end;
+}
+
+#wr-app .wr-customer-search-wrap{
+  position:relative;
+  min-width:0;
+}
+
+#wr-app .wr-customer-search-wrap > .bi-search{
+  position:absolute;
+  left:12px;
+  top:50%;
+  transform:translateY(-50%);
+  z-index:2;
+  color:#7c8b9b;
+  pointer-events:none;
+}
+
+#wr-app #wr-customer-search{
+  padding-left:36px;
+  width:100%;
+}
+
+#wr-app .wr-customer-new-btn{
+  min-height:38px;
+  white-space:nowrap;
+}
+
+#wr-app .wr-customer-results{
+  position:absolute;
+  z-index:120;
+  top:calc(100% + 5px);
+  left:0;
+  right:0;
+  max-height:290px;
+  overflow:auto;
+  padding:5px;
+  border:1px solid #d9e3ec;
+  border-radius:10px;
+  background:#fff;
+  box-shadow:0 14px 34px rgba(22,55,86,.16);
+}
+
+#wr-app .wr-customer-result{
+  width:100%;
+  display:flex;
+  flex-direction:column;
+  align-items:flex-start;
+  gap:2px;
+  padding:9px 10px;
+  border:0;
+  border-radius:7px;
+  background:#fff;
+  color:#243e56;
+  text-align:left;
+}
+
+#wr-app .wr-customer-result:hover{
+  background:#eef6ff;
+}
+
+#wr-app .wr-customer-result strong{
+  font-size:.82rem;
+}
+
+#wr-app .wr-customer-result span{
+  font-size:.71rem;
+  color:#728196;
+}
+
+#wr-app .wr-customer-empty{
+  display:flex;
+  gap:8px;
+  align-items:flex-start;
+  padding:12px;
+  color:#718096;
+  font-size:.76rem;
+}
+
+/* Alta rápida */
+#wr-app .wr-customer-dialog{
+  width:min(650px,94vw);
+  border:0;
+  border-radius:16px;
+  padding:0;
+  box-shadow:0 26px 80px rgba(11,34,55,.28);
+}
+
+#wr-app .wr-customer-dialog::backdrop{
+  background:rgba(12,31,49,.55);
+}
+
+#wr-app .wr-customer-dialog-head{
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:16px;
+  padding:18px 20px 14px;
+  border-bottom:1px solid #e3e9ef;
+}
+
+#wr-app .wr-customer-dialog form{
+  padding:18px 20px 20px;
+}
+
+#wr-app .wr-customer-form-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:12px;
+}
+
+#wr-app .wr-customer-form-wide{
+  grid-column:1 / -1;
+}
+
+#wr-app .wr-customer-dialog-actions{
+  display:flex;
+  justify-content:flex-end;
+  gap:8px;
+  margin-top:18px;
+}
+
+/* Mantener exactamente la misma asimetría en desktop medio. */
+@media (max-width:1320px){
+  #wr-app .wr-switchboard.wr-switchboard-clean,
+  #wr-app #wr-capture-view > .wr-layout-grid{
+    grid-template-columns:minmax(0,1fr) 320px !important;
+  }
+
+  #wr-app #wr-create.wr-sale-mode .wr-general-grid{
+    grid-template-columns:minmax(230px,.8fr) minmax(360px,1.6fr) !important;
+  }
+}
+
+@media (max-width:1050px){
+  #wr-app .wr-switchboard.wr-switchboard-clean,
+  #wr-app #wr-capture-view > .wr-layout-grid{
+    grid-template-columns:1fr !important;
+  }
+
+  #wr-app .wr-switchboard-clean .wr-request-types{
+    grid-template-columns:repeat(3,minmax(0,1fr)) !important;
+  }
+
+  #wr-app #wr-create.wr-sale-mode .wr-general-grid{
+    grid-template-columns:1fr 1.35fr !important;
+  }
+}
+
+@media (max-width:720px){
+  #wr-app .wr-switchboard-clean .wr-request-types{
+    grid-template-columns:1fr !important;
+  }
+
+  #wr-app #wr-create.wr-sale-mode .wr-general-grid,
+  #wr-app .wr-customer-form-grid{
+    grid-template-columns:1fr !important;
+  }
+
+  #wr-app #wr-create.wr-sale-mode #wr-sale-origin-group,
+  #wr-app #wr-create.wr-sale-mode #wr-customer-group,
+  #wr-app #wr-create.wr-sale-mode .wr-general-required,
+  #wr-app #wr-create.wr-sale-mode .wr-general-observations,
+  #wr-app .wr-customer-form-wide{
+    grid-column:1 !important;
+    grid-row:auto !important;
+    max-width:none !important;
+  }
+
+  #wr-app .wr-customer-picker{
+    grid-template-columns:1fr !important;
+  }
+
+  #wr-app .wr-customer-new-btn{
+    width:100%;
+  }
+}
+
+
+/* 1.0.6 · Cliente: buscador + botón como un solo control agrupado */
+#wr-app .wr-customer-picker{
+  display:flex !important;
+  align-items:stretch !important;
+  gap:0 !important;
+  width:100% !important;
+}
+
+#wr-app .wr-customer-search-wrap{
+  flex:1 1 auto !important;
+  min-width:0 !important;
+}
+
+#wr-app #wr-customer-search{
+  height:38px !important;
+  border-top-right-radius:0 !important;
+  border-bottom-right-radius:0 !important;
+  border-right:0 !important;
+}
+
+#wr-app .wr-customer-new-btn{
+  flex:0 0 auto !important;
+  height:38px !important;
+  min-height:38px !important;
+  margin:0 !important;
+  border-top-left-radius:0 !important;
+  border-bottom-left-radius:0 !important;
+  border-left:1px solid #86b7fe !important;
+  white-space:nowrap !important;
+}
+
+#wr-app .wr-customer-picker:focus-within #wr-customer-search{
+  position:relative;
+  z-index:2;
+}
+
+#wr-app .wr-customer-picker:focus-within .wr-customer-new-btn{
+  position:relative;
+  z-index:1;
+}
+
+/* El desplegable conserva el ancho del área de búsqueda, no del botón. */
+#wr-app .wr-customer-results{
+  right:0 !important;
+}
+
+@media (max-width:720px){
+  #wr-app .wr-customer-picker{
+    display:flex !important;
+    flex-direction:row !important;
+  }
+
+  #wr-app .wr-customer-new-btn{
+    width:auto !important;
+  }
+}
+
+
+/* 1.0.7 · Venta: selección de tinas = propuesta opcional */
+#wr-app #wr-create.wr-sale-mode [data-line-state] .wr-state-badge.wr-state-empty{
+  background:#f1f4f7;
+  color:#607286;
+}
+
+#wr-app #wr-create.wr-sale-mode #wr-summary-pending.wr-negative{
+  color:#b7791f;
+}
+
+#wr-app #wr-create.wr-sale-mode .wr-coverage-sub{
+  white-space:normal;
+}
+/* ==========================================================================
+   GRUPOMAR · Solicitudes · Modal Seleccionar tinas UI 1.0.0
+   Alcance: SOLO diseño. No modifica IDs, endpoints, DataTables ni lógica.
+   Mockup aprobado 25-09-2026.
+   ========================================================================== */
+
+#wr-app #wr-stock-dialog.wr-stock-dialog-redesign{
+  width:min(1460px, calc(100vw - 48px)) !important;
+  max-width:1460px !important;
+  max-height:calc(100vh - 56px) !important;
+  padding:0 !important;
+  overflow:auto !important;
+  border:1px solid #cbd8e8 !important;
+  border-radius:14px !important;
+  background:#fff !important;
+  box-shadow:0 24px 70px rgba(8, 31, 55, .26) !important;
+}
+
+#wr-app #wr-stock-dialog.wr-stock-dialog-redesign::backdrop{
+  background:rgba(10, 31, 50, .62) !important;
+  backdrop-filter:blur(2px);
+}
+
+#wr-app #wr-stock-dialog .wr-stock-head{
+  display:flex !important;
+  align-items:flex-start !important;
+  justify-content:space-between !important;
+  gap:20px !important;
+  padding:20px 28px 17px !important;
+  border-bottom:1px solid #dde6f0 !important;
+  background:#fff !important;
+}
+
+#wr-app #wr-stock-dialog .wr-stock-head .wr-eyebrow{
+  margin-bottom:4px !important;
+  color:#6c86a4 !important;
+  font-size:.72rem !important;
+  font-weight:800 !important;
+  letter-spacing:.12em !important;
+  text-transform:uppercase !important;
+}
+
+#wr-app #wr-stock-dialog #wr-stock-title{
+  margin:0 0 4px !important;
+  color:#153652 !important;
+  font-size:1.35rem !important;
+  line-height:1.15 !important;
+  font-weight:800 !important;
+}
+
+#wr-app #wr-stock-dialog .wr-stock-head p{
+  color:#687787 !important;
+  font-size:.84rem !important;
+}
+
+#wr-app #wr-stock-dialog #wr-stock-close{
+  flex:0 0 auto !important;
+  width:34px !important;
+  height:34px !important;
+  margin:0 !important;
+  padding:7px !important;
+  border:1px solid #d5e0ec !important;
+  border-radius:10px !important;
+  background-color:#f8fbfe !important;
+  opacity:.88 !important;
+}
+
+#wr-app #wr-stock-dialog #wr-stock-close:hover{
+  background-color:#eef5fb !important;
+  opacity:1 !important;
+}
+
+#wr-app #wr-stock-dialog .wr-stock-kpis{
+  display:grid !important;
+  grid-template-columns:repeat(4, minmax(0, 1fr)) !important;
+  gap:14px !important;
+  padding:18px 28px 14px !important;
+  background:#fff !important;
+}
+
+#wr-app #wr-stock-dialog .wr-stock-kpi{
+  min-width:0 !important;
+  min-height:82px !important;
+  display:flex !important;
+  align-items:center !important;
+  gap:14px !important;
+  padding:14px 16px !important;
+  border:1px solid #d6e1ec !important;
+  border-radius:9px !important;
+  background:#fbfdff !important;
+  box-shadow:0 1px 2px rgba(20, 54, 82, .025) !important;
+}
+
+#wr-app #wr-stock-dialog .wr-stock-kpi-icon{
+  width:48px !important;
+  height:48px !important;
+  flex:0 0 48px !important;
+  display:inline-flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  border-radius:50% !important;
+  background:#eaf5ff !important;
+  color:#0b5e98 !important;
+  font-size:1.28rem !important;
+}
+
+#wr-app #wr-stock-dialog .wr-stock-kpi-copy{
+  min-width:0 !important;
+  display:flex !important;
+  flex-direction:column !important;
+  gap:3px !important;
+}
+
+#wr-app #wr-stock-dialog .wr-stock-kpi-copy > span{
+  color:#647995 !important;
+  font-size:.82rem !important;
+  font-weight:500 !important;
+}
+
+#wr-app #wr-stock-dialog .wr-stock-kpi-copy strong{
+  color:#173c60 !important;
+  font-size:1.05rem !important;
+  font-weight:800 !important;
+  line-height:1.2 !important;
+  white-space:nowrap !important;
+  overflow:hidden !important;
+  text-overflow:ellipsis !important;
+}
+
+#wr-app #wr-stock-dialog .wr-stock-scope-note{
+  min-height:44px !important;
+  display:flex !important;
+  align-items:center !important;
+  gap:10px !important;
+  margin:0 28px 14px !important;
+  padding:10px 14px !important;
+  border:1px solid #a8d5f5 !important;
+  border-radius:8px !important;
+  background:#eef8ff !important;
+  color:#285a80 !important;
+  font-size:.82rem !important;
+}
+
+#wr-app #wr-stock-dialog .wr-stock-scope-note i{
+  color:#0b6aa7 !important;
+  font-size:1rem !important;
+}
+
+#wr-app #wr-stock-dialog .wr-stock-filter-grid{
+  display:grid !important;
+  grid-template-columns:minmax(180px,1fr) minmax(200px,1.15fr) minmax(220px,1.1fr) minmax(160px,.8fr) 142px !important;
+  gap:12px !important;
+  align-items:end !important;
+  margin:0 !important;
+  padding:0 28px 16px !important;
+}
+
+#wr-app #wr-stock-dialog .wr-stock-filter-field{
+  min-width:0 !important;
+}
+
+#wr-app #wr-stock-dialog .wr-stock-filter-field .form-label{
+  margin:0 0 6px !important;
+  color:#344f6c !important;
+  font-size:.78rem !important;
+  font-weight:600 !important;
+}
+
+#wr-app #wr-stock-dialog .wr-stock-filter-grid .form-control,
+#wr-app #wr-stock-dialog .wr-stock-filter-grid .form-select{
+  min-height:42px !important;
+  border-color:#c9d7e5 !important;
+  border-radius:8px !important;
+  color:#294a68 !important;
+  font-size:.88rem !important;
+  box-shadow:none !important;
+}
+
+#wr-app #wr-stock-dialog .wr-stock-filter-grid .form-control:focus,
+#wr-app #wr-stock-dialog .wr-stock-filter-grid .form-select:focus{
+  border-color:#78b9e5 !important;
+  box-shadow:0 0 0 3px rgba(13, 110, 164, .09) !important;
+}
+
+#wr-app #wr-stock-dialog .wr-stock-filter-grid .form-select:disabled{
+  color:#31516f !important;
+  background-color:#f8fafc !important;
+  opacity:1 !important;
+}
+
+#wr-app #wr-stock-dialog .wr-stock-filter-action{
+  align-self:end !important;
+}
+
+#wr-app #wr-stock-dialog #wr-stock-apply{
+  min-height:42px !important;
+  display:flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  gap:8px !important;
+  padding:8px 16px !important;
+  border-radius:8px !important;
+  border-color:#086ca6 !important;
+  background:linear-gradient(90deg,#075f98,#0e8fc6) !important;
+  font-size:.86rem !important;
+  font-weight:700 !important;
+  box-shadow:none !important;
+}
+
+#wr-app #wr-stock-dialog #wr-stock-message{
+  margin:0 28px 12px !important;
+}
+
+#wr-app #wr-stock-dialog .wr-stock-summary{
+  display:grid !important;
+  grid-template-columns:minmax(0,1fr) minmax(0,1fr) !important;
+  gap:18px !important;
+  align-items:center !important;
+  margin:0 28px 12px !important;
+  padding:10px 4px 12px !important;
+  border-bottom:1px solid #e1e8f0 !important;
+  font-size:.82rem !important;
+}
+
+#wr-app #wr-stock-dialog #wr-stock-total{
+  color:#6b7784 !important;
+  white-space:normal !important;
+}
+
+#wr-app #wr-stock-dialog #wr-stock-selected{
+  padding-left:18px !important;
+  border-left:1px solid #dce5ee !important;
+  color:#243d56 !important;
+  white-space:normal !important;
+}
+
+#wr-app #wr-stock-dialog .wr-stock-table-wrap{
+  margin:0 14px 0 !important;
+  padding:0 0 2px !important;
+  overflow:visible !important;
+  border:1px solid #d9e3ed !important;
+  border-radius:10px !important;
+  background:#fff !important;
+}
+
+#wr-app #wr-stock-dialog #wr-stock-table_wrapper{
+  padding:10px 12px 8px !important;
+}
+
+#wr-app #wr-stock-dialog #wr-stock-table_wrapper .dataTables_length{
+  margin:0 0 8px !important;
+  color:#263f58 !important;
+  font-size:.84rem !important;
+}
+
+#wr-app #wr-stock-dialog #wr-stock-table_wrapper .dataTables_length select{
+  min-width:68px !important;
+  margin:0 4px !important;
+  border:1px solid #cddae7 !important;
+  border-radius:8px !important;
+  padding:5px 24px 5px 9px !important;
+  color:#294a68 !important;
+  background-color:#fff !important;
+}
+
+#wr-app #wr-stock-dialog #wr-stock-table{
+  margin:0 !important;
+  border-collapse:separate !important;
+  border-spacing:0 !important;
+}
+
+#wr-app #wr-stock-dialog #wr-stock-table thead th{
+  padding:11px 12px !important;
+  border-top:1px solid #dbe5ef !important;
+  border-bottom:1px solid #d2deea !important;
+  background:#f1f6fb !important;
+  color:#4b6682 !important;
+  font-size:.69rem !important;
+  font-weight:800 !important;
+  letter-spacing:.015em !important;
+  text-transform:uppercase !important;
+  white-space:nowrap !important;
+}
+
+#wr-app #wr-stock-dialog #wr-stock-table tbody td{
+  padding:10px 12px !important;
+  border-bottom:1px solid #edf1f5 !important;
+  color:#344d65 !important;
+  font-size:.82rem !important;
+  vertical-align:middle !important;
+}
+
+#wr-app #wr-stock-dialog #wr-stock-table tbody tr:last-child td{
+  border-bottom:0 !important;
+}
+
+#wr-app #wr-stock-dialog #wr-stock-table tbody tr:hover td{
+  background:#f9fcff !important;
+}
+
+#wr-app #wr-stock-dialog #wr-stock-table td.dataTables_empty{
+  height:150px !important;
+  padding:50px 20px 26px !important;
+  color:transparent !important;
+  font-size:0 !important;
+  text-align:center !important;
+  position:relative !important;
+  background:#fff !important;
+}
+
+#wr-app #wr-stock-dialog #wr-stock-table td.dataTables_empty::before{
+  content:"";
+  position:absolute;
+  left:50%;
+  top:28px;
+  width:44px;
+  height:44px;
+  transform:translateX(-50%);
+  border-radius:50%;
+  background:#eef4fa;
+  box-shadow:inset 0 0 0 1px #e1e9f2;
+}
+
+#wr-app #wr-stock-dialog #wr-stock-table td.dataTables_empty::after{
+  content:"Sin tinas disponibles\A No hay tinas que coincidan con los filtros seleccionados.";
+  display:block !important;
+  margin-top:18px !important;
+  color:#183a58 !important;
+  font-size:.86rem !important;
+  font-weight:700 !important;
+  line-height:1.8 !important;
+  white-space:pre-line !important;
+}
+
+#wr-app #wr-stock-dialog #wr-stock-table_wrapper .dataTables_info{
+  padding-top:12px !important;
+  color:#5f7081 !important;
+  font-size:.78rem !important;
+}
+
+#wr-app #wr-stock-dialog #wr-stock-table_wrapper:has(td.dataTables_empty) .dataTables_info{
+  visibility:hidden !important;
+}
+
+#wr-app #wr-stock-dialog #wr-stock-table_wrapper .dataTables_paginate{
+  padding-top:9px !important;
+}
+
+#wr-app #wr-stock-dialog #wr-stock-table_wrapper .dataTables_paginate .paginate_button{
+  min-width:36px !important;
+  margin-left:0 !important;
+  padding:6px 11px !important;
+  border:1px solid #d5e0eb !important;
+  background:#fff !important;
+  color:#34516d !important;
+  box-shadow:none !important;
+}
+
+#wr-app #wr-stock-dialog #wr-stock-table_wrapper .dataTables_paginate .paginate_button.current{
+  border-color:#7db9e1 !important;
+  background:#eff8ff !important;
+  color:#0c5f96 !important;
+}
+
+#wr-app #wr-stock-dialog #wr-stock-table_wrapper .dataTables_paginate .paginate_button:hover{
+  border-color:#b9ccde !important;
+  background:#f5f9fc !important;
+  color:#214563 !important;
+}
+
+#wr-app #wr-stock-dialog .wr-stock-select{
+  width:30px !important;
+  height:30px !important;
+  border-radius:7px !important;
+}
+
+#wr-app #wr-stock-dialog .wr-stock-status{
+  display:inline-flex !important;
+  align-items:center !important;
+  min-height:26px !important;
+  padding:4px 9px !important;
+  border-radius:999px !important;
+  font-size:.7rem !important;
+  font-weight:700 !important;
+  white-space:nowrap !important;
+}
+
+#wr-app #wr-stock-dialog .wr-stock-footer{
+  position:sticky !important;
+  bottom:0 !important;
+  z-index:5 !important;
+  display:flex !important;
+  align-items:center !important;
+  justify-content:space-between !important;
+  gap:16px !important;
+  margin-top:12px !important;
+  padding:11px 28px !important;
+  border-top:1px solid #dde6ef !important;
+  background:#fff !important;
+  box-shadow:0 -5px 14px rgba(29, 54, 78, .035) !important;
+  color:#223a51 !important;
+  font-size:.82rem !important;
+  font-weight:700 !important;
+}
+
+#wr-app #wr-stock-dialog #wr-stock-done{
+  min-height:38px !important;
+  min-width:150px !important;
+  padding:7px 15px !important;
+  border-radius:8px !important;
+  font-weight:600 !important;
+}
+
+/* Desktop más compacto sin sacrificar lectura. */
+@media (max-width:1200px){
+  #wr-app #wr-stock-dialog.wr-stock-dialog-redesign{
+    width:calc(100vw - 28px) !important;
+  }
+  #wr-app #wr-stock-dialog .wr-stock-kpis{
+    grid-template-columns:repeat(2,minmax(0,1fr)) !important;
+  }
+  #wr-app #wr-stock-dialog .wr-stock-filter-grid{
+    grid-template-columns:repeat(2,minmax(0,1fr)) !important;
+  }
+  #wr-app #wr-stock-dialog .wr-stock-filter-action{
+    grid-column:span 2 !important;
+  }
+}
+
+@media (max-width:720px){
+  #wr-app #wr-stock-dialog.wr-stock-dialog-redesign{
+    width:calc(100vw - 16px) !important;
+    max-height:calc(100vh - 16px) !important;
+    border-radius:10px !important;
+  }
+  #wr-app #wr-stock-dialog .wr-stock-head,
+  #wr-app #wr-stock-dialog .wr-stock-kpis{
+    padding-left:16px !important;
+    padding-right:16px !important;
+  }
+  #wr-app #wr-stock-dialog .wr-stock-kpis{
+    grid-template-columns:1fr !important;
+    gap:8px !important;
+  }
+  #wr-app #wr-stock-dialog .wr-stock-kpi{
+    min-height:66px !important;
+  }
+  #wr-app #wr-stock-dialog .wr-stock-kpi-icon{
+    width:40px !important;
+    height:40px !important;
+    flex-basis:40px !important;
+  }
+  #wr-app #wr-stock-dialog .wr-stock-scope-note{
+    margin-left:16px !important;
+    margin-right:16px !important;
+  }
+  #wr-app #wr-stock-dialog .wr-stock-filter-grid{
+    grid-template-columns:1fr !important;
+    padding-left:16px !important;
+    padding-right:16px !important;
+  }
+  #wr-app #wr-stock-dialog .wr-stock-filter-action{
+    grid-column:auto !important;
+  }
+  #wr-app #wr-stock-dialog .wr-stock-summary{
+    grid-template-columns:1fr !important;
+    margin-left:16px !important;
+    margin-right:16px !important;
+  }
+  #wr-app #wr-stock-dialog #wr-stock-selected{
+    padding-left:0 !important;
+    padding-top:8px !important;
+    border-left:0 !important;
+    border-top:1px solid #e1e8f0 !important;
+  }
+  #wr-app #wr-stock-dialog .wr-stock-table-wrap{
+    margin-left:8px !important;
+    margin-right:8px !important;
+    overflow-x:auto !important;
+  }
+  #wr-app #wr-stock-dialog .wr-stock-footer{
+    padding-left:16px !important;
+    padding-right:16px !important;
+  }
+}
+/* ==========================================================================
+   GRUPOMAR · Solicitudes · Modal Seleccionar tinas UI 1.0.1
+   Ajuste fino aprobado 25-09-2026.
+   SOLO DISEÑO: compacta KPIs y elimina el footer sticky pesado.
+   ========================================================================== */
+
+#wr-app #wr-stock-dialog.wr-stock-dialog-redesign{
+  width:min(1380px, calc(100vw - 64px)) !important;
+  max-width:1380px !important;
+}
+
+#wr-app #wr-stock-dialog .wr-stock-head{
+  padding:16px 24px 14px !important;
+}
+
+#wr-app #wr-stock-dialog #wr-stock-title{
+  font-size:1.25rem !important;
+}
+
+#wr-app #wr-stock-dialog #wr-stock-close{
+  width:32px !important;
+  height:32px !important;
+  border-radius:9px !important;
+}
+
+/* KPI: más finos, centrados y sin ocupar visualmente todo el ancho. */
+#wr-app #wr-stock-dialog .wr-stock-kpis{
+  width:calc(100% - 48px) !important;
+  max-width:1120px !important;
+  margin:0 auto !important;
+  padding:14px 0 12px !important;
+  gap:10px !important;
+}
+
+#wr-app #wr-stock-dialog .wr-stock-kpi{
+  min-height:62px !important;
+  padding:9px 12px !important;
+  gap:10px !important;
+  border-radius:8px !important;
+  background:#fcfdff !important;
+}
+
+#wr-app #wr-stock-dialog .wr-stock-kpi-icon{
+  width:38px !important;
+  height:38px !important;
+  flex:0 0 38px !important;
+  font-size:1rem !important;
+}
+
+#wr-app #wr-stock-dialog .wr-stock-kpi-copy{
+  gap:1px !important;
+}
+
+#wr-app #wr-stock-dialog .wr-stock-kpi-copy > span{
+  font-size:.73rem !important;
+}
+
+#wr-app #wr-stock-dialog .wr-stock-kpi-copy strong{
+  font-size:.93rem !important;
+}
+
+#wr-app #wr-stock-dialog .wr-stock-scope-note{
+  margin:0 24px 12px !important;
+  min-height:40px !important;
+  padding:8px 12px !important;
+  font-size:.78rem !important;
+}
+
+#wr-app #wr-stock-dialog .wr-stock-filter-grid{
+  padding:0 24px 13px !important;
+  gap:10px !important;
+}
+
+#wr-app #wr-stock-dialog .wr-stock-filter-grid .form-control,
+#wr-app #wr-stock-dialog .wr-stock-filter-grid .form-select,
+#wr-app #wr-stock-dialog #wr-stock-apply{
+  min-height:38px !important;
+}
+
+#wr-app #wr-stock-dialog .wr-stock-filter-field .form-label{
+  margin-bottom:4px !important;
+  font-size:.74rem !important;
+}
+
+#wr-app #wr-stock-dialog .wr-stock-summary{
+  margin:0 24px 10px !important;
+  padding:8px 2px 10px !important;
+  font-size:.78rem !important;
+}
+
+#wr-app #wr-stock-dialog .wr-stock-table-wrap{
+  margin:0 12px !important;
+  border-radius:8px !important;
+}
+
+#wr-app #wr-stock-dialog #wr-stock-table_wrapper{
+  padding:8px 10px 6px !important;
+}
+
+#wr-app #wr-stock-dialog #wr-stock-table thead th{
+  padding:9px 10px !important;
+}
+
+#wr-app #wr-stock-dialog #wr-stock-table tbody td{
+  padding:8px 10px !important;
+}
+
+/* El footer deja de flotar sobre la tabla al usar scroll. */
+#wr-app #wr-stock-dialog .wr-stock-footer{
+  position:static !important;
+  display:flex !important;
+  align-items:center !important;
+  justify-content:space-between !important;
+  min-height:48px !important;
+  margin:8px 12px 0 !important;
+  padding:7px 12px 9px !important;
+  border-top:1px solid #e2e8f0 !important;
+  background:#fff !important;
+  box-shadow:none !important;
+  font-size:.76rem !important;
+}
+
+#wr-app #wr-stock-dialog #wr-stock-footer-summary{
+  font-size:.76rem !important;
+  font-weight:700 !important;
+  color:#2c4359 !important;
+}
+
+#wr-app #wr-stock-dialog #wr-stock-done{
+  min-height:32px !important;
+  min-width:128px !important;
+  padding:5px 12px !important;
+  border-radius:7px !important;
+  font-size:.78rem !important;
+  line-height:1.2 !important;
+}
+
+/* Paginación ligeramente más compacta para que el cierre no compita visualmente. */
+#wr-app #wr-stock-dialog #wr-stock-table_wrapper .dataTables_info{
+  padding-top:9px !important;
+  font-size:.74rem !important;
+}
+
+#wr-app #wr-stock-dialog #wr-stock-table_wrapper .dataTables_paginate{
+  padding-top:6px !important;
+}
+
+#wr-app #wr-stock-dialog #wr-stock-table_wrapper .dataTables_paginate .paginate_button{
+  min-width:32px !important;
+  padding:5px 9px !important;
+}
+
+@media (max-width:1200px){
+  #wr-app #wr-stock-dialog.wr-stock-dialog-redesign{
+    width:calc(100vw - 32px) !important;
+  }
+
+  #wr-app #wr-stock-dialog .wr-stock-kpis{
+    max-width:none !important;
+    width:calc(100% - 32px) !important;
+  }
+}
+
+@media (max-width:720px){
+  #wr-app #wr-stock-dialog .wr-stock-kpis{
+    width:calc(100% - 24px) !important;
+  }
+
+  #wr-app #wr-stock-dialog .wr-stock-footer{
+    margin-left:8px !important;
+    margin-right:8px !important;
+    padding-left:8px !important;
+    padding-right:8px !important;
+  }
+
+  #wr-app #wr-stock-dialog #wr-stock-done{
+    min-width:118px !important;
+  }
+}
+/* ==========================================================================
+   GRUPOMAR · Solicitudes · Modal Seleccionar tinas UI 1.0.2
+   FIX: footer no debe superponerse a las filas de DataTable.
+   SOLO DISEÑO.
+   ========================================================================== */
+
+/*
+ * En 1.0.0 se dejó overflow:visible en el contenedor de tabla.
+ * Con DataTables y un alto limitado, las filas podían pintarse fuera del
+ * contenedor y el footer aparecía encima de ellas.
+ * Se corrige haciendo que la tabla administre su propio scroll.
+ */
+#wr-app #wr-stock-dialog .wr-stock-table-wrap{
+  position:relative !important;
+  display:block !important;
+  max-height:min(52vh, 560px) !important;
+  overflow-x:auto !important;
+  overflow-y:auto !important;
+  overscroll-behavior:contain !important;
+  scrollbar-gutter:stable !important;
+}
+
+/* Todo el contenido de DataTables queda contenido dentro de su bloque. */
+#wr-app #wr-stock-dialog #wr-stock-table_wrapper{
+  position:relative !important;
+  display:block !important;
+  min-width:980px !important;
+  overflow:visible !important;
+}
+
+/* El footer participa en el flujo normal, siempre DESPUÉS de la tabla. */
+#wr-app #wr-stock-dialog .wr-stock-footer{
+  position:relative !important;
+  inset:auto !important;
+  left:auto !important;
+  right:auto !important;
+  top:auto !important;
+  bottom:auto !important;
+  z-index:1 !important;
+  clear:both !important;
+  width:auto !important;
+  margin:8px 12px 0 !important;
+  padding:7px 12px 9px !important;
+  background:#fff !important;
+  box-shadow:none !important;
+  transform:none !important;
+}
+
+/* Botón discreto y alineado al borde derecho. */
+#wr-app #wr-stock-dialog #wr-stock-done{
+  position:static !important;
+  float:none !important;
+  flex:0 0 auto !important;
+  margin:0 !important;
+  min-width:126px !important;
+  min-height:32px !important;
+}
+
+/* Evita que paginación/info se salgan visualmente del contenedor. */
+#wr-app #wr-stock-dialog #wr-stock-table_wrapper .dataTables_info,
+#wr-app #wr-stock-dialog #wr-stock-table_wrapper .dataTables_paginate{
+  position:static !important;
+  float:none !important;
+}
+
+#wr-app #wr-stock-dialog #wr-stock-table_wrapper .dataTables_paginate{
+  display:flex !important;
+  justify-content:flex-end !important;
+  align-items:center !important;
+  flex-wrap:wrap !important;
+  gap:0 !important;
+  margin-left:auto !important;
+}
+
+/* En pantallas bajas, la tabla conserva un área útil sin tapar controles. */
+@media (max-height:760px){
+  #wr-app #wr-stock-dialog .wr-stock-table-wrap{
+    max-height:40vh !important;
+  }
+}
+
+@media (max-width:720px){
+  #wr-app #wr-stock-dialog .wr-stock-table-wrap{
+    max-height:46vh !important;
+  }
+
+  #wr-app #wr-stock-dialog #wr-stock-table_wrapper{
+    min-width:900px !important;
+  }
+}

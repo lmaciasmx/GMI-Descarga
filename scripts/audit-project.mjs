@@ -1,0 +1,326 @@
+﻿import { readdir, readFile, stat } from 'node:fs/promises';
+import { dirname, extname, join, relative, resolve } from 'node:path';
+
+const root = resolve('.');
+const ignoredDirectories = new Set(['node_modules', 'vendor', 'writable']);
+const failures = [];
+
+async function walk(directory) {
+  const result = [];
+  for (const entry of await readdir(directory, { withFileTypes: true })) {
+    if (entry.isDirectory() && ignoredDirectories.has(entry.name)) continue;
+    const path = join(directory, entry.name);
+    if (entry.isDirectory()) result.push(...await walk(path));
+    else result.push(path);
+  }
+  return result;
+}
+
+async function exists(path) {
+  try { return (await stat(path)).isFile(); } catch { return false; }
+}
+
+async function existsDirectory(path) {
+  try { return (await stat(path)).isDirectory(); } catch { return false; }
+}
+
+function fail(message) {
+  failures.push(message);
+}
+
+function portablePath(path) {
+  return path.replaceAll('\\', '/');
+}
+
+const files = await walk(root);
+const phpFiles = files.filter((file) => extname(file) === '.php');
+const requiredStructureFiles = [
+  'app/Config/Paths.php',
+  'app/Controllers/BaseController.php',
+  'app/Views/errors/cli/production.php',
+  'app/Views/errors/html/production.php',
+  'public/.htaccess',
+  'public/index.php',
+  'spark',
+  'preload.php',
+  'phpunit.xml.dist',
+  'writable/.htaccess',
+];
+for (const file of requiredStructureFiles) {
+  if (!await exists(join(root, file))) fail(`Archivo estructural requerido inexistente: ${file}`);
+}
+for (const directory of ['cache', 'debugbar', 'logs', 'session', 'uploads', 'labels']) {
+  if (!await existsDirectory(join(root, 'writable', directory))) {
+    fail(`Directorio runtime requerido inexistente: writable/${directory}`);
+  }
+}
+let appImportCount = 0;
+for (const file of phpFiles) {
+  const source = await readFile(file, 'utf8');
+  for (const match of source.matchAll(/^use\s+(App\\[^;]+);/gm)) {
+    const className = match[1].replace(/\s+as\s+.+$/i, '');
+    const importedPath = join(root, `${className.replace(/^App\\/, 'app\\').replaceAll('\\', '/')}.php`);
+    appImportCount += 1;
+    if (!await exists(importedPath)) fail(`Import App inexistente en ${relative(root, file)}: ${className}`);
+  }
+}
+const routeSource = await readFile(join(root, 'app/Config/Routes.php'), 'utf8');
+let routeTargetCount = 0;
+
+for (const line of routeSource.split(/\r?\n/)) {
+  if (!line.includes('$routes->') || !line.includes('App')) continue;
+  const match = line.match(/['"]([^'"]*App[^'"]*::[^'"]+)['"]/);
+  if (!match) continue;
+  const target = match[1].replaceAll('\\\\', '\\').replace(/^\\/, '');
+  const [className, rawMethod] = target.split('::');
+  const method = rawMethod.split('/')[0];
+  const controllerPath = join(root, `${className.replace(/^App\\/, 'app\\').replaceAll('\\', '/')}.php`);
+  routeTargetCount += 1;
+  if (!await exists(controllerPath)) {
+    fail(`Controlador de ruta inexistente: ${target}`);
+    continue;
+  }
+  const controller = await readFile(controllerPath, 'utf8');
+  if (!new RegExp(`\\bfunction\\s+${method}\\s*\\(`).test(controller)) {
+    fail(`Método de ruta inexistente: ${target}`);
+  }
+}
+
+const apiSection = routeSource.slice(routeSource.indexOf("$routes->group('api/v1'"));
+const externalRoutes = new Set();
+for (const line of apiSection.split(/\r?\n/)) {
+  const match = line.match(/\$routes->(get|post|put|patch|delete)\('([^']+)'/);
+  if (!match) continue;
+  let path = match[2].replaceAll('(:num)', '{id}');
+  path = path.replaceAll('(:segment)', path.startsWith('catalogs/') ? '{catalog}' : '{segment}');
+  externalRoutes.add(`${match[1].toUpperCase()} /${path}`);
+}
+
+const openApi = await readFile(join(root, 'docs/api/openapi.yaml'), 'utf8');
+const documentedRoutes = new Set();
+let currentPath = null;
+for (const line of openApi.split(/\r?\n/)) {
+  const pathMatch = line.match(/^  (\/[^:]+):\s*$/);
+  if (pathMatch) {
+    currentPath = pathMatch[1];
+    continue;
+  }
+  const methodMatch = line.match(/^    (get|post|put|patch|delete):\s*$/);
+  if (currentPath && methodMatch) documentedRoutes.add(`${methodMatch[1].toUpperCase()} ${currentPath}`);
+}
+for (const route of externalRoutes) if (!documentedRoutes.has(route)) fail(`Ruta externa sin OpenAPI: ${route}`);
+for (const route of documentedRoutes) if (!externalRoutes.has(route)) fail(`Operación OpenAPI sin ruta externa: ${route}`);
+
+let viewReferenceCount = 0;
+for (const file of phpFiles) {
+  const source = await readFile(file, 'utf8');
+  for (const match of source.matchAll(/\bview\(\s*['"]([^'"]+)['"]/g)) {
+    const logical = match[1].replaceAll('\\\\', '\\');
+    const viewPath = logical.startsWith('App\\')
+      ? join(root, `${logical.replace(/^App\\/, 'app\\').replaceAll('\\', '/')}.php`)
+      : join(root, `app/Views/${logical.replaceAll('\\', '/')}.php`);
+    viewReferenceCount += 1;
+    if (!await exists(viewPath)) fail(`Vista inexistente desde ${relative(root, file)}: ${logical}`);
+  }
+}
+
+const viewFiles = phpFiles.filter((file) => portablePath(file).includes('/Views/'));
+for (const file of viewFiles) {
+  const source = await readFile(file, 'utf8');
+  for (const match of source.matchAll(/<script\b([^>]*)>([\s\S]*?)<\/script>/gi)) {
+    if (!/\bsrc\s*=/.test(match[1]) && match[2].trim() !== '') {
+      fail(`Script inline incompatible con CSP: ${relative(root, file)}`);
+    }
+  }
+  for (const match of source.matchAll(/(?:src|href)=["'](\/assets\/[^"']+)["']/g)) {
+	  const assetUrl = match[1];
+
+	  // Para validar existencia física se eliminan query string y fragmentos.
+	  // Ejemplo:
+	  // /assets/js/warehouse-entry.js?v=1.3.0
+	  // ->
+	  // /assets/js/warehouse-entry.js
+	  const assetPath = assetUrl.replace(/[?#].*$/, '');
+
+	  if (!await exists(join(root, 'public', assetPath))) {
+		fail(`Asset local inexistente: ${assetUrl} en ${relative(root, file)}`);
+	  }
+	}
+}
+
+const migrationFiles = phpFiles.filter((file) => portablePath(file).includes('/Database/Migrations/'));
+if (migrationFiles.length === 0) fail('No se encontraron migrations de dominio para auditar.');
+const migrationSource = (await Promise.all(migrationFiles.map((file) => readFile(file, 'utf8')))).join('\n');
+const tables = new Set(Array.from(migrationSource.matchAll(/CREATE\s+(?:OR\s+REPLACE\s+)?TABLE\s+([a-z0-9_]+)/gi), (match) => match[1]));
+const views = new Set(Array.from(migrationSource.matchAll(/CREATE\s+(?:OR\s+REPLACE\s+)?VIEW\s+([a-z0-9_]+)/gi), (match) => match[1]));
+const foreignKeys = Array.from(migrationSource.matchAll(/REFERENCES\s+([a-z0-9_]+)\s*\(/gi), (match) => match[1]);
+for (const referencedTable of foreignKeys) {
+  if (!tables.has(referencedTable)) fail(`FK referencia una tabla de dominio no creada: ${referencedTable}`);
+}
+
+const columnsByTable = new Map();
+
+for (const match of migrationSource.matchAll(/CREATE\s+TABLE\s+([a-z0-9_]+)\s*\(([\s\S]*?)\) ENGINE/gi)) {
+  columnsByTable.set(match[1], new Set(Array.from(
+    match[2].matchAll(/^\s{4}([a-z][a-z0-9_]*)\s+(?:BIGINT|INT|MEDIUMINT|SMALLINT|TINYINT|CHAR|VARCHAR|TINYTEXT|TEXT|MEDIUMTEXT|LONGTEXT|DECIMAL|NUMERIC|FLOAT|DOUBLE|REAL|BIT|BOOLEAN|BOOL|DATETIME|TIMESTAMP|DATE|TIME|YEAR|JSON|BINARY|VARBINARY|TINYBLOB|BLOB|MEDIUMBLOB|LONGBLOB|ENUM|SET)\b/gmi),
+    (column) => column[1],
+  )));
+}
+
+function literalArrayKeys(source, openingBracket) {
+  const keys = [];
+  let depth = 0;
+
+  for (let index = openingBracket; index < source.length; index += 1) {
+    const character = source[index];
+
+    if (character === '[') {
+      depth += 1;
+      continue;
+    }
+
+    if (character === ']') {
+      depth -= 1;
+
+      if (depth === 0) {
+        return keys;
+      }
+
+      continue;
+    }
+
+    if (character !== "'" && character !== '"') {
+      continue;
+    }
+
+    const quote = character;
+    const start = index + 1;
+    let escaped = false;
+
+    index += 1;
+
+    for (; index < source.length; index += 1) {
+      if (escaped) {
+        escaped = false;
+        continue;
+      }
+
+      if (source[index] === '\\') {
+        escaped = true;
+        continue;
+      }
+
+      if (source[index] === quote) {
+        break;
+      }
+    }
+
+    const value = source.slice(start, index);
+
+    let cursor = index + 1;
+
+    while (/\s/.test(source[cursor] || '')) {
+      cursor += 1;
+    }
+
+    if (
+      depth === 1
+      && source.slice(cursor, cursor + 2) === '=>'
+    ) {
+      keys.push(value);
+    }
+  }
+
+  return keys;
+}
+
+/*
+ * CodeIgniter permite ampliar tablas existentes mediante:
+ *
+ * $this->forge->addColumn('tabla', [
+ *     'campo' => [...]
+ * ]);
+ *
+ * La auditoría original solamente obtenía columnas desde CREATE TABLE,
+ * por lo que consideraba inexistentes los campos agregados posteriormente.
+ * Aquí incorporamos también las columnas declaradas con addColumn().
+ */
+for (const match of migrationSource.matchAll(
+  /->addColumn\(\s*['"]([a-z0-9_]+)['"]\s*,\s*\[/gi
+)) {
+  const table = match[1];
+
+  const openingBracket =
+    match.index
+    + match[0].lastIndexOf('[');
+
+  const columns =
+    columnsByTable.get(table)
+    ?? new Set();
+
+  for (const column of literalArrayKeys(
+    migrationSource,
+    openingBracket
+  )) {
+    columns.add(column);
+  }
+
+  columnsByTable.set(table, columns);
+}
+
+let literalDatabaseFieldCount = 0;
+for (const file of phpFiles) {
+  const source = await readFile(file, 'utf8');
+  for (const tableMatch of source.matchAll(/->table\(\s*['"]([a-z0-9_]+)['"]\s*\)/gi)) {
+    const table = tableMatch[1];
+    const columns = columnsByTable.get(table);
+    if (!columns) continue;
+    const statementStart = tableMatch.index + tableMatch[0].length;
+    const statementEnd = source.indexOf(';', statementStart);
+    const statement = source.slice(statementStart, statementEnd < 0 ? statementStart + 5000 : statementEnd);
+    for (const operation of statement.matchAll(/->(?:insert|update)\s*\(\s*\[/g)) {
+      const bracket = statementStart + operation.index + operation[0].lastIndexOf('[');
+      for (const field of literalArrayKeys(source, bracket)) {
+        literalDatabaseFieldCount += 1;
+        if (!columns.has(field)) fail(`Campo literal inexistente en ${relative(root, file)}: ${table}.${field}`);
+      }
+    }
+  }
+}
+if (tables.size === 0) fail('La auditoría no encontró tablas de dominio en las migrations.');
+if (literalDatabaseFieldCount === 0) fail('La auditoría no encontró campos literales de persistencia.');
+
+const markdownFiles = files.filter((file) => extname(file) === '.md');
+let documentationLinkCount = 0;
+for (const file of markdownFiles) {
+  const source = await readFile(file, 'utf8');
+  for (const match of source.matchAll(/\[[^\]]*\]\(([^)]+)\)/g)) {
+    const rawTarget = match[1].split('#')[0];
+    if (rawTarget === '' || /^(?:https?:|mailto:|sandbox:)/.test(rawTarget)) continue;
+    documentationLinkCount += 1;
+    if (!await exists(resolve(dirname(file), rawTarget))) fail(`Enlace local roto en ${relative(root, file)}: ${rawTarget}`);
+  }
+}
+
+const unfinishedMarker = new RegExp(`\\b(?:${'TO' + 'DO'}|${'FIX' + 'ME'}|${'X' + 'XX'})\\b`);
+for (const file of files.filter((item) => !portablePath(item).includes('/public/vendor/') && !['.svg', '.woff', '.woff2', '.png'].includes(extname(item)))) {
+  const source = await readFile(file, 'utf8').catch(() => '');
+  if (unfinishedMarker.test(source)) fail(`Marcador de trabajo pendiente en ${relative(root, file)}`);
+}
+
+if (failures.length > 0) {
+  for (const failure of failures) process.stderr.write(`ERROR: ${failure}\n`);
+  process.exit(1);
+}
+
+process.stdout.write([
+  'Auditoría estructural correcta.',
+  `Rutas a controladores verificadas: ${routeTargetCount}.`,
+  `Operaciones API/OpenAPI conciliadas: ${externalRoutes.size}.`,
+  `Imports internos verificados: ${appImportCount}.`,
+  `Referencias de vistas verificadas: ${viewReferenceCount}.`,
+  `Tablas/vistas/FK de dominio: ${tables.size}/${views.size}/${foreignKeys.length}.`,
+  `Campos literales insert/update verificados: ${literalDatabaseFieldCount}.`,
+  `Enlaces documentales locales verificados: ${documentationLinkCount}.`,
+].join('\n') + '\n');
+

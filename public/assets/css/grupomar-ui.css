@@ -1,0 +1,769 @@
+/*
+ * GRUPOMAR UI GLOBAL 1.0.0
+ * Capa visual global cargada después de app.css.
+ * No contiene lógica y no modifica componentes funcionales.
+ */
+
+:root {
+  --gm-ui-navy-950: #061927;
+  --gm-ui-navy-900: #0b2942;
+  --gm-ui-navy-850: #103753;
+  --gm-ui-navy-800: #123f65;
+  --gm-ui-blue-600: #0f79a8;
+  --gm-ui-teal-500: #12c5d6;
+  --gm-ui-teal-450: #20d6df;
+  --gm-ui-ice-50: #f7fafc;
+  --gm-ui-ice-100: #eef5f8;
+  --gm-ui-surface: #ffffff;
+  --gm-ui-text: #173854;
+  --gm-ui-muted: #6b7f91;
+  --gm-ui-border: #dbe5eb;
+  --gm-ui-border-soft: #e7eef2;
+  --gm-ui-success: #16845b;
+  --gm-ui-warning: #d97706;
+  --gm-ui-danger: #b42318;
+  --gm-ui-radius-sm: 10px;
+  --gm-ui-radius: 14px;
+  --gm-ui-radius-lg: 18px;
+  --gm-ui-shadow-sm: 0 4px 14px rgba(11, 41, 66, .055);
+  --gm-ui-shadow: 0 10px 30px rgba(11, 41, 66, .07);
+  --gm-ui-focus: 0 0 0 .22rem rgba(18, 197, 214, .18);
+}
+
+/* ------------------------------------------------------------------
+   Base / typography
+   ------------------------------------------------------------------ */
+
+body.gm-app {
+  background: #f4f7f9;
+  color: var(--gm-ui-text);
+  font-family: "Manrope", "Segoe UI", system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+  font-weight: 500;
+  letter-spacing: -.008em;
+}
+
+.gm-app button,
+.gm-app input,
+.gm-app select,
+.gm-app textarea,
+.gm-app .dropdown-menu,
+.gm-app .select2-container,
+.gm-app .dataTables_wrapper {
+  font-family: inherit;
+}
+
+.gm-app h1,
+.gm-app h2,
+.gm-app h3,
+.gm-app h4,
+.gm-app h5,
+.gm-app h6 {
+  color: #103653;
+  font-weight: 800;
+  letter-spacing: -.025em;
+}
+
+.gm-app a {
+  text-underline-offset: 2px;
+}
+
+/* ------------------------------------------------------------------
+   App shell / sidebar
+   ------------------------------------------------------------------ */
+
+.gm-app .app-shell {
+  grid-template-columns: 264px minmax(0, 1fr);
+}
+
+.gm-app .app-sidebar {
+  background:
+    radial-gradient(circle at 15% 0%, rgba(18, 197, 214, .10), transparent 28%),
+    linear-gradient(180deg, #0b2942 0%, #071e31 56%, #061927 100%);
+  padding: 1.18rem .95rem 1.4rem;
+  border-right: 1px solid rgba(255,255,255,.04);
+  scrollbar-width: thin;
+  scrollbar-color: rgba(124, 190, 207, .35) transparent;
+}
+
+.gm-app .app-sidebar::-webkit-scrollbar {
+  width: 7px;
+}
+
+.gm-app .app-sidebar::-webkit-scrollbar-thumb {
+  background: rgba(124, 190, 207, .30);
+  border-radius: 999px;
+}
+
+.gm-app .brand {
+  gap: .8rem;
+  padding: .25rem .55rem 1.2rem;
+  border-bottom-color: rgba(255,255,255,.11);
+}
+
+.gm-app .brand-mark {
+  width: 44px;
+  height: 44px;
+  border-radius: 13px;
+  background: linear-gradient(135deg, var(--gm-ui-teal-500), #0fa5cf);
+  color: #06243a;
+  font-weight: 900;
+  box-shadow: 0 8px 20px rgba(18, 197, 214, .14);
+}
+
+.gm-app .brand-title {
+  color: #fff;
+  font-size: 1.08rem;
+  font-weight: 850;
+  line-height: 1.05;
+  letter-spacing: -.025em;
+}
+
+.gm-app .brand-subtitle {
+  margin-top: 3px;
+  color: #8cc8d8;
+  font-size: .66rem;
+  font-weight: 700;
+  letter-spacing: .075em;
+}
+
+.gm-app .nav-caption {
+  padding: 1.08rem .8rem .4rem;
+  color: #6f9eae;
+  font-size: .64rem;
+  font-weight: 800;
+  letter-spacing: .115em;
+}
+
+.gm-app .sidebar-link {
+  position: relative;
+  min-height: 43px;
+  margin-bottom: 3px;
+  padding: .62rem .76rem;
+  border: 1px solid transparent;
+  border-radius: 11px;
+  color: #d7e7ed;
+  font-size: .89rem;
+  font-weight: 650;
+  transition: background-color .16s ease, border-color .16s ease, color .16s ease, transform .16s ease;
+}
+
+.gm-app .sidebar-link i {
+  width: 20px;
+  color: #8fc6d5;
+  font-size: 1rem;
+  text-align: center;
+}
+
+.gm-app .sidebar-link:hover {
+  color: #fff;
+  background: rgba(18, 197, 214, .09);
+  border-color: rgba(18, 197, 214, .08);
+  transform: translateX(1px);
+}
+
+.gm-app .sidebar-link:hover i {
+  color: #c5f6fa;
+}
+
+.gm-app .sidebar-link.active {
+  color: #fff;
+  background: linear-gradient(90deg, rgba(18, 197, 214, .19), rgba(18, 197, 214, .075));
+  border-color: rgba(18, 197, 214, .15);
+  box-shadow: inset 3px 0 0 var(--gm-ui-teal-500);
+}
+
+.gm-app .sidebar-link.active i {
+  color: var(--gm-ui-teal-450);
+}
+
+/* ------------------------------------------------------------------
+   Header / context
+   ------------------------------------------------------------------ */
+
+.gm-app .app-main {
+  background: #f4f7f9;
+}
+
+.gm-app .app-header {
+  height: 70px;
+  padding: 0 1.45rem;
+  background: rgba(255,255,255,.96);
+  border-bottom: 1px solid var(--gm-ui-border-soft);
+  box-shadow: 0 1px 0 rgba(11,41,66,.025);
+  backdrop-filter: blur(10px);
+}
+
+.gm-app .scope-chip {
+  min-height: 36px;
+  display: inline-flex;
+  align-items: center;
+  gap: .42rem;
+  padding: .42rem .82rem;
+  background: #eff8fa;
+  border: 1px solid #c9e9ed;
+  border-radius: 999px;
+  color: #17617c;
+  font-size: .79rem;
+  font-weight: 750;
+}
+
+.gm-app .scope-chip i {
+  color: #0ba5b7;
+}
+
+.gm-app .app-header .dropdown > .btn {
+  min-height: 40px;
+  padding-inline: .8rem;
+  border: 1px solid #e2eaef;
+  border-radius: 11px;
+  background: #fff;
+  color: #35536a;
+  font-size: .86rem;
+  font-weight: 700;
+}
+
+.gm-app .app-header .dropdown > .btn:hover,
+.gm-app .app-header .dropdown > .btn:focus {
+  border-color: #cddce5;
+  background: #f9fbfc;
+  color: #173f5b;
+}
+
+.gm-app .dropdown-menu {
+  padding: .45rem;
+  border: 1px solid var(--gm-ui-border-soft);
+  border-radius: 13px;
+  box-shadow: 0 14px 36px rgba(11,41,66,.13);
+}
+
+.gm-app .dropdown-item {
+  border-radius: 9px;
+  font-size: .88rem;
+  font-weight: 650;
+}
+
+.gm-app .dropdown-item:active {
+  background: var(--gm-ui-navy-800);
+}
+
+/* ------------------------------------------------------------------
+   Content / headings
+   ------------------------------------------------------------------ */
+
+.gm-app .content-wrap {
+  max-width: 1840px;
+  padding: 1.55rem 1.65rem 2rem;
+}
+
+.gm-app .page-heading {
+  align-items: center;
+  margin-bottom: 1.15rem;
+  padding: .1rem .1rem .15rem;
+}
+
+.gm-app .page-heading h1 {
+  margin: 0;
+  color: #103653;
+  font-size: clamp(1.4rem, 2vw, 1.92rem);
+  font-weight: 850;
+  letter-spacing: -.035em;
+}
+
+.gm-app .page-heading p {
+  margin-top: .28rem;
+  color: #758797;
+  font-size: .91rem;
+  line-height: 1.45;
+}
+
+/* ------------------------------------------------------------------
+   Cards
+   ------------------------------------------------------------------ */
+
+.gm-app .card {
+  border: 1px solid var(--gm-ui-border-soft);
+  border-radius: var(--gm-ui-radius);
+  background: var(--gm-ui-surface);
+  box-shadow: var(--gm-ui-shadow-sm);
+}
+
+.gm-app .card-header {
+  min-height: 49px;
+  display: flex;
+  align-items: center;
+  background: #fff;
+  border-bottom: 1px solid var(--gm-ui-border-soft);
+  color: #25465f;
+  font-weight: 800;
+  border-radius: var(--gm-ui-radius) var(--gm-ui-radius) 0 0 !important;
+}
+
+.gm-app .card-footer {
+  background: #fbfcfd;
+  border-top-color: var(--gm-ui-border-soft);
+}
+
+.gm-app .metric-card {
+  box-shadow: var(--gm-ui-shadow-sm);
+}
+
+.gm-app .metric-card::after {
+  width: 4px;
+  border-radius: 0 var(--gm-ui-radius) var(--gm-ui-radius) 0;
+}
+
+.gm-app .metric-label {
+  color: #718495;
+  font-size: .73rem;
+  font-weight: 800;
+  letter-spacing: .065em;
+}
+
+.gm-app .metric-value {
+  color: #103653;
+  font-weight: 850;
+}
+
+/* ------------------------------------------------------------------
+   Buttons
+   ------------------------------------------------------------------ */
+
+.gm-app .btn {
+  border-radius: 10px;
+  font-weight: 700;
+  letter-spacing: -.008em;
+}
+
+.gm-app .btn-primary {
+  border-color: #0f6f9b;
+  background: linear-gradient(90deg, #0b4478 0%, #0f8fc4 100%);
+  color: #fff;
+}
+
+.gm-app .btn-primary:hover,
+.gm-app .btn-primary:focus,
+.gm-app .btn-primary:active {
+  border-color: #0c648c !important;
+  background: linear-gradient(90deg, #093b69 0%, #0c7dad 100%) !important;
+  color: #fff !important;
+}
+
+.gm-app .btn-primary:focus-visible,
+.gm-app .btn-outline-primary:focus-visible,
+.gm-app .btn-outline-secondary:focus-visible {
+  box-shadow: var(--gm-ui-focus);
+}
+
+.gm-app .btn-operational {
+  min-height: 50px;
+  border-radius: 12px;
+  padding-inline: 1.15rem;
+  font-weight: 800;
+}
+
+.gm-app .btn-outline-primary {
+  border-color: #8cc8d8;
+  color: #176a88;
+}
+
+.gm-app .btn-outline-primary:hover {
+  border-color: #0f8aa5;
+  background: #eff9fa;
+  color: #0d6078;
+}
+
+.gm-app .btn-light {
+  border-color: #dfe8ed;
+  background: #f8fafb;
+  color: #455e71;
+}
+
+.gm-app .btn-light:hover {
+  border-color: #cedbe3;
+  background: #f1f5f7;
+  color: #2f4d64;
+}
+
+/* ------------------------------------------------------------------
+   Forms
+   ------------------------------------------------------------------ */
+
+.gm-app .form-label {
+  margin-bottom: .42rem;
+  color: #455f72;
+  font-size: .79rem;
+  font-weight: 800;
+}
+
+.gm-app .industrial-form .form-label {
+  color: #455f72;
+  font-size: .75rem;
+  letter-spacing: .055em;
+}
+
+.gm-app .form-control,
+.gm-app .form-select,
+.gm-app .input-group-text {
+  border-color: #d5e0e7;
+  border-radius: 10px;
+  color: #24445d;
+}
+
+.gm-app .form-control,
+.gm-app .form-select {
+  min-height: 44px;
+  background-color: #fff;
+  font-size: .92rem;
+  font-weight: 550;
+}
+
+.gm-app .industrial-form .form-control,
+.gm-app .industrial-form .form-select {
+  min-height: 49px;
+}
+
+.gm-app .form-control::placeholder {
+  color: #98a8b5;
+}
+
+.gm-app .form-control:focus,
+.gm-app .form-select:focus {
+  border-color: #48bdca;
+  box-shadow: var(--gm-ui-focus);
+}
+
+.gm-app .input-group > .form-control:not(:first-child),
+.gm-app .input-group > .form-select:not(:first-child) {
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+}
+
+.gm-app .input-group > .form-control:not(:last-child),
+.gm-app .input-group > .form-select:not(:last-child) {
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+}
+
+/* ------------------------------------------------------------------
+   Select2
+   ------------------------------------------------------------------ */
+
+.gm-app .select2-container--default .select2-selection--single,
+.gm-app .select2-container--default .select2-selection--multiple {
+  min-height: 44px;
+  border: 1px solid #d5e0e7;
+  border-radius: 10px;
+  background: #fff;
+}
+
+.gm-app .industrial-form .select2-container--default .select2-selection--single,
+.gm-app .industrial-form .select2-container--default .select2-selection--multiple {
+  min-height: 49px;
+}
+
+.gm-app .select2-container--default.select2-container--focus .select2-selection--multiple,
+.gm-app .select2-container--default.select2-container--open .select2-selection--single {
+  border-color: #48bdca;
+  box-shadow: var(--gm-ui-focus);
+}
+
+.gm-app .select2-container--default .select2-selection--single .select2-selection__rendered {
+  line-height: 42px;
+  color: #24445d;
+  font-size: .92rem;
+}
+
+.gm-app .select2-container--default .select2-selection--single .select2-selection__arrow {
+  height: 42px;
+}
+
+.gm-app .select2-dropdown {
+  border-color: #d5e0e7;
+  border-radius: 10px;
+  box-shadow: 0 12px 30px rgba(11,41,66,.10);
+  overflow: hidden;
+}
+
+.gm-app .select2-results__option--highlighted.select2-results__option--selectable {
+  background: #0f7fa9;
+}
+
+/* ------------------------------------------------------------------
+   Tables / DataTables
+   ------------------------------------------------------------------ */
+
+.gm-app .table {
+  --bs-table-bg: transparent;
+  --bs-table-hover-bg: #f4fafb;
+  color: #2f4c61;
+  font-size: .88rem;
+}
+
+.gm-app .table > :not(caption) > * > * {
+  padding: .78rem .72rem;
+  border-bottom-color: #e7edf1;
+}
+
+.gm-app .table thead th {
+  padding-top: .68rem;
+  padding-bottom: .68rem;
+  background: #f7fafb;
+  color: #607587;
+  border-bottom: 1px solid #dde7ec;
+  font-size: .7rem;
+  font-weight: 850;
+  letter-spacing: .065em;
+}
+
+.gm-app .table tbody tr:last-child > * {
+  border-bottom-width: 0;
+}
+
+.gm-app .table-responsive {
+  border-radius: 11px;
+}
+
+.gm-app .dataTables_wrapper .dataTables_length label,
+.gm-app .dataTables_wrapper .dataTables_filter label,
+.gm-app .dataTables_wrapper .dataTables_info {
+  color: #6f8292;
+  font-size: .82rem;
+  font-weight: 600;
+}
+
+.gm-app .dataTables_wrapper .dataTables_filter input,
+.gm-app .dataTables_wrapper .dataTables_length select {
+  border-color: #d5e0e7;
+  border-radius: 9px;
+}
+
+.gm-app .page-link {
+  min-width: 35px;
+  border-color: #dfe7ec;
+  color: #416078;
+  font-size: .82rem;
+  font-weight: 700;
+}
+
+.gm-app .page-item.active .page-link {
+  border-color: #0f80aa;
+  background: #0f80aa;
+  color: #fff;
+}
+
+.gm-app .dt-buttons .btn {
+  border-radius: 9px;
+  font-size: .8rem;
+}
+
+/* ------------------------------------------------------------------
+   Badges / states / alerts
+   ------------------------------------------------------------------ */
+
+.gm-app .badge,
+.gm-app .badge-state,
+.gm-app .badge-soft {
+  font-family: inherit;
+  font-weight: 800;
+  letter-spacing: .005em;
+}
+
+.gm-app .badge-state {
+  padding: .4rem .64rem;
+  border-radius: 999px;
+}
+
+.gm-app .alert {
+  border-width: 1px;
+  border-radius: 12px;
+  font-size: .89rem;
+}
+
+.gm-app .alert-info {
+  border-color: #cce9ef;
+  background: #eef9fb;
+  color: #285e70;
+}
+
+.gm-app .alert-success {
+  border-color: #cfeadc;
+  background: #eef8f3;
+  color: #246044;
+}
+
+.gm-app .alert-warning {
+  border-color: #f1dfb4;
+  background: #fff9eb;
+  color: #77551b;
+}
+
+.gm-app .alert-danger {
+  border-color: #f0cecc;
+  background: #fff1f0;
+  color: #7d302c;
+}
+
+/* ------------------------------------------------------------------
+   Modals
+   ------------------------------------------------------------------ */
+
+.gm-app .modal-content {
+  border: 1px solid #dfe8ed;
+  border-radius: 16px;
+  box-shadow: 0 20px 60px rgba(7, 31, 50, .20);
+  overflow: hidden;
+}
+
+.gm-app .modal-header {
+  min-height: 58px;
+  padding: .9rem 1.1rem;
+  background: #f8fafb;
+  border-bottom-color: #e5edf1;
+}
+
+.gm-app .modal-title {
+  color: #173f5b;
+  font-size: 1.05rem;
+  font-weight: 850;
+}
+
+.gm-app .modal-footer {
+  border-top-color: #e7edf1;
+  background: #fbfcfd;
+}
+
+/* ------------------------------------------------------------------
+   Catalog/navigation/status helpers
+   ------------------------------------------------------------------ */
+
+.gm-app .catalog-nav .list-group-item {
+  border-color: #edf1f4;
+  color: #496175;
+}
+
+.gm-app .catalog-nav .list-group-item.active {
+  border-color: #0f7da7;
+  background: linear-gradient(90deg, #0c557f, #0f87ad);
+}
+
+.gm-app .status-pill {
+  min-height: 40px;
+  border-color: #dfe7ec;
+  box-shadow: 0 2px 7px rgba(11,41,66,.025);
+}
+
+.gm-app .calculation-tile {
+  border-color: #e1e9ee;
+  background: #f8fafb;
+  border-radius: 11px;
+}
+
+/* ------------------------------------------------------------------
+   SweetAlert2
+   ------------------------------------------------------------------ */
+
+.gm-app .swal2-popup {
+  border-radius: 18px;
+  font-family: inherit;
+  color: var(--gm-ui-text);
+}
+
+.gm-app .swal2-title {
+  color: #173f5b;
+  font-weight: 850;
+}
+
+.gm-app .swal2-confirm {
+  border-radius: 10px !important;
+  background: linear-gradient(90deg, #0b4478 0%, #0f8fc4 100%) !important;
+  font-weight: 800 !important;
+}
+
+/* ------------------------------------------------------------------
+   Offline / focus / accessibility
+   ------------------------------------------------------------------ */
+
+.gm-app .offline-banner {
+  top: 70px;
+}
+
+.gm-app :focus-visible {
+  outline-color: rgba(18, 197, 214, .6);
+  outline-offset: 2px;
+}
+
+@media (max-width: 991.98px) {
+  .gm-app .app-shell {
+    grid-template-columns: 1fr;
+  }
+
+  .gm-app .app-sidebar {
+    width: min(86vw, 304px);
+  }
+
+  .gm-app .app-header {
+    padding: 0 .95rem;
+  }
+
+  .gm-app .content-wrap {
+    padding: 1rem .95rem 1.5rem;
+  }
+
+  .gm-app .page-heading {
+    align-items: flex-start;
+  }
+}
+
+@media (max-width: 575.98px) {
+  .gm-app .app-header {
+    height: 64px;
+  }
+
+  .gm-app .scope-chip {
+    max-width: 52vw;
+    padding-inline: .65rem;
+    font-size: .74rem;
+  }
+
+  .gm-app .page-heading {
+    gap: .7rem;
+    margin-bottom: 1rem;
+  }
+
+  .gm-app .page-heading h1 {
+    font-size: 1.35rem;
+  }
+
+  .gm-app .page-heading p {
+    font-size: .84rem;
+  }
+
+  .gm-app .content-wrap {
+    padding-inline: .75rem;
+  }
+
+  .gm-app .card {
+    border-radius: 12px;
+  }
+
+  .gm-app .app-header .dropdown > .btn {
+    max-width: 38vw;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+
+  .gm-app .offline-banner {
+    top: 64px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .gm-app *,
+  .gm-app *::before,
+  .gm-app *::after {
+    scroll-behavior: auto !important;
+    transition-duration: .001ms !important;
+    animation-duration: .001ms !important;
+  }
+}

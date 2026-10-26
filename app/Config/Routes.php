@@ -1,0 +1,267 @@
+<?php
+
+use CodeIgniter\Router\RouteCollection;
+
+/** @var RouteCollection $routes */
+$routes->setDefaultNamespace('App\\Controllers');
+$routes->setDefaultController('DashboardController');
+$routes->setDefaultMethod('index');
+$routes->setTranslateURIDashes(false);
+$routes->set404Override();
+$routes->setAutoRoute(false);
+
+service('auth')->routes($routes, ['except' => ['register', 'login', 'magic-link']]);
+$routes->get('login', '\\CodeIgniter\\Shield\\Controllers\\LoginController::loginView', ['as' => 'login']);
+$routes->post('login', '\\CodeIgniter\\Shield\\Controllers\\LoginController::loginAction', ['filter' => 'auth-rates']);
+$routes->get('login/magic-link', '\\CodeIgniter\\Shield\\Controllers\\MagicLinkController::loginView', ['as' => 'magic-link']);
+$routes->post('login/magic-link', '\\CodeIgniter\\Shield\\Controllers\\MagicLinkController::loginAction', ['filter' => 'auth-rates']);
+$routes->get('login/verify-magic-link', '\\CodeIgniter\\Shield\\Controllers\\MagicLinkController::verify', ['as' => 'verify-magic-link']);
+
+$routes->get('/', static fn () => redirect()->to('/home'));
+$routes->get('home', '\\App\\Modules\\Security\\Controllers\\HomeController::index', ['filter' => 'session']);
+$routes->match(['get', 'post'], 'scope/select', '\\App\\Modules\\Security\\Controllers\\ScopeController::select', ['filter' => 'session']);
+
+$routes->group('', ['filter' => ['session', 'scope']], static function (RouteCollection $routes): void {
+    $routes->get('dashboard', '\\App\\Modules\\Dashboard\\Controllers\\DashboardController::index', ['filter' => 'permission:dashboard.view']);
+
+    $routes->group('operacion', static function (RouteCollection $routes): void {
+        $routes->get('planes', '\\App\\Modules\\DischargePlanning\\Controllers\\PlanController::index', ['filter' => 'permission:plans.manage']);
+        $routes->get('descarga', '\\App\\Modules\\DischargePlanning\\Controllers\\DischargeStationController::index', ['filter' => 'permission:discharge.operate']);
+        $routes->get('pesaje', '\\App\\Modules\\Weighing\\Controllers\\WeighingStationController::index', ['filter' => 'permission:weighings.create']);
+        $routes->get('entrada-frigorifico', '\\App\\Modules\\WarehouseEntry\\Controllers\\WarehouseEntryController::index', ['filter' => 'permission:weighings.create']);
+        $routes->get('acomodo-tinas', '\\App\\Modules\\WarehouseEntry\\Controllers\\WarehouseEntryController::placement', ['filter' => 'permission:receiving.confirm']);
+        $routes->get('etiquetas', '\\App\\Modules\\Labeling\\Controllers\\LabelStationController::index', ['filter' => 'permission:labels.print,labels.reprint']);
+        $routes->get('etiquetas/trabajos/(:num)/archivo', '\\App\\Modules\\Labeling\\Controllers\\LabelStationController::download/$1', ['filter' => 'permission:labels.print,labels.reprint']);
+        $routes->get('etiquetas/(:num)/pdf', '\\App\\Modules\\Labeling\\Controllers\\LabelStationController::pdf/$1', ['filter' => 'permission:labels.print,labels.reprint']);
+        $routes->get('calidad', '\\App\\Modules\\Quality\\Controllers\\QualityController::index', ['filter' => 'permission:quality.inspect']);
+        $routes->get('calidad/reporte.csv', '\\App\\Modules\\Quality\\Controllers\\QualityController::exportCsv', ['filter' => 'permission:quality.inspect']);
+        $routes->get('calidad/reporte.pdf', '\\App\\Modules\\Quality\\Controllers\\QualityController::exportPdf', ['filter' => 'permission:quality.inspect']);
+        $routes->get('recepcion', '\\App\\Modules\\Receiving\\Controllers\\ReceivingController::index', ['filter' => 'permission:receiving.confirm']);
+    });
+
+    $routes->group('inventario', static function (RouteCollection $routes): void {
+        $routes->get('/', '\\App\\Modules\\Inventory\\Controllers\\InventoryController::index', ['filter' => 'permission:inventory.view']);
+        $routes->get('movimientos', '\\App\\Modules\\Inventory\\Controllers\\InventoryController::movements', ['filter' => 'permission:inventory.view']);
+        $routes->get('conteos', '\\App\\Modules\\Inventory\\Controllers\\InventoryCountPageController::index', ['filter' => 'permission:inventory.adjust']);
+        $routes->get('camaras', '\\App\\Modules\\Inventory\\Controllers\\ChamberLayoutController::index', ['filter' => 'permission:inventory.view']);
+    });
+
+    $routes->get('solicitudes', '\\App\\Modules\\Supply\\Controllers\\RequestController::index', ['filter' => 'permission:requests.create,requests.approve,reservations.manage']);
+    $routes->get('traspasos', '\\App\\Modules\\Transfers\\Controllers\\TransferController::index', ['filter' => 'permission:transfers.manage']);
+    $routes->get('ventas', '\\App\\Modules\\Sales\\Controllers\\SalesController::index', ['filter' => 'permission:sales.manage']);
+    $routes->get('facturacion', '\\App\\Modules\\Billing\\Controllers\\BillingController::index', ['filter' => 'permission:billing.reference']);
+    $routes->get('reportes', '\\App\\Modules\\Reports\\Controllers\\ReportController::index', ['filter' => 'permission:reports.view']);
+    $routes->get('catalogos', '\\App\\Modules\\Catalogs\\Controllers\\CatalogManagementController::index', ['filter' => 'permission:catalogs.manage']);
+    $routes->get('usuarios', '\\App\\Modules\\Users\\Controllers\\UserController::index', ['filter' => 'permission:users.manage']);
+    $routes->get('auditoria', '\\App\\Modules\\Audit\\Controllers\\AuditController::index', ['filter' => 'permission:audit.view']);
+    $routes->get('integraciones', '\\App\\Modules\\Integrations\\Controllers\\IntegrationConsoleController::index', ['filter' => 'permission:integrations.manage']);
+    $routes->get('configuracion', '\\App\\Modules\\Configuration\\Controllers\\ConfigurationController::index', ['filter' => 'permission:configuration.manage']);
+});
+
+// CatÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¡logos Maestros: requieren sesiÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â³n y permiso, pero NO operational_scope.
+// El alcance operativo aplica a procesos; no debe impedir administrar maestros de otras empresas.
+$routes->group('internal/v1', ['filter' => 'session'], static function (RouteCollection $routes): void {
+    $routes->get('catalogs/(:segment)', '\\App\\Modules\\Catalogs\\Controllers\\Api\\CatalogController::show/$1', ['filter' => 'permission:catalogs.manage']);
+
+    $routes->group('', ['filter' => 'idempotency'], static function (RouteCollection $routes): void {
+        $routes->post('catalogs/(:segment)', '\\App\\Modules\\Catalogs\\Controllers\\Api\\CatalogController::create/$1', ['filter' => 'permission:catalogs.manage']);
+        $routes->put('catalogs/(:segment)/(:num)', '\\App\\Modules\\Catalogs\\Controllers\\Api\\CatalogController::update/$1/$2', ['filter' => 'permission:catalogs.manage']);
+        $routes->post('catalogs/(:segment)/(:num)/deactivate', '\\App\\Modules\\Catalogs\\Controllers\\Api\\CatalogController::deactivate/$1/$2', ['filter' => 'permission:catalogs.manage']);
+    });
+});
+
+$routes->group('internal/v1', ['filter' => ['session', 'scope']], static function (RouteCollection $routes): void {
+    $routes->get('scale/status', '\\App\\Modules\\Weighing\\Controllers\\Api\\ScaleController::status', ['filter' => 'permission:weighings.create']);
+    $routes->get('requests/(:num)/availability', '\\App\\Modules\\Supply\\Controllers\\Api\\RequestController::availability/$1', ['filter' => 'permission:reservations.manage']);
+    $routes->get('plans/(:num)', '\\App\\Modules\\DischargePlanning\\Controllers\\Api\\PlanController::show/$1', ['filter' => 'permission:plans.manage']);
+    $routes->get('inventory/chambers/(:num)/layout', '\\App\\Modules\\Inventory\\Controllers\\Api\\ChamberLayoutController::show/$1', ['filter' => 'permission:inventory.view']);
+$routes->get('warehouse-entry/plans/(:num)/detail', '\\App\\Modules\\WarehouseEntry\\Controllers\\Api\\WarehouseEntryController::planDetail/$1', ['filter' => 'permission:weighings.create']);
+    $routes->get('warehouse-entry/tubs/search', '\\App\\Modules\\WarehouseEntry\\Controllers\\Api\\WarehouseEntryController::tubs', ['filter' => 'permission:weighings.create']);
+    $routes->get('warehouse-entry/participants/search', '\\App\\Modules\\WarehouseEntry\\Controllers\\Api\\WarehouseEntryController::participants', ['filter' => 'permission:weighings.create']);
+    $routes->get('warehouse-entry/warehouses/(:num)/chambers', '\\App\\Modules\\WarehouseEntry\\Controllers\\Api\\WarehouseEntryController::chambers/$1', ['filter' => 'permission:weighings.create']);
+    $routes->get('warehouse-entry/chambers/(:num)/sectors', '\\App\\Modules\\WarehouseEntry\\Controllers\\Api\\WarehouseEntryController::sectors/$1', ['filter' => 'permission:weighings.create']);
+    $routes->get('warehouse-entry/chambers/(:num)/stacks', '\\App\\Modules\\WarehouseEntry\\Controllers\\Api\\WarehouseEntryController::stacks/$1', ['filter' => 'permission:receiving.confirm']);
+
+    $routes->get('inventory/movements/(:num)', '\\App\\Modules\\Inventory\\Controllers\\Api\\MovementController::show/$1', ['filter' => 'permission:inventory.view']);
+    $routes->get('inventory/movements/units/search', '\\App\\Modules\\Inventory\\Controllers\\Api\\MovementController::units', ['filter' => 'permission:inventory.move']);
+    $routes->get('inventory/movements/warehouses/(:num)/chambers', '\\App\\Modules\\Inventory\\Controllers\\Api\\MovementController::chambers/$1', ['filter' => 'permission:inventory.move']);
+    $routes->get('inventory/movements/chambers/(:num)/sectors', '\\App\\Modules\\Inventory\\Controllers\\Api\\MovementController::sectors/$1', ['filter' => 'permission:inventory.move']);
+    $routes->get('inventory/counts/(:num)/items', '\\App\\Modules\\Inventory\\Controllers\\Api\\InventoryCountController::items/$1', ['filter' => 'permission:inventory.adjust']);
+
+    $routes->get('transfers/units/search', '\\App\\Modules\\Transfers\\Controllers\\Api\\TransferController::units', ['filter' => 'permission:transfers.manage']);
+    $routes->get('transfers/warehouses/(:num)/chambers', '\\App\\Modules\\Transfers\\Controllers\\Api\\TransferController::chambers/$1', ['filter' => 'permission:transfers.manage']);
+    $routes->get('transfers/chambers/(:num)/sectors', '\\App\\Modules\\Transfers\\Controllers\\Api\\TransferController::sectors/$1', ['filter' => 'permission:transfers.manage']);
+    $routes->get('transfers/(:num)', '\\App\\Modules\\Transfers\\Controllers\\Api\\TransferController::show/$1', ['filter' => 'permission:transfers.manage']);
+
+    $routes->get('sales/requests/history', '\\App\\Modules\\Sales\\Controllers\\Api\\SalesRequestController::history', ['filter' => 'permission:requests.create,reservations.manage,transfers.manage,requests.approve,sales.manage']);
+    $routes->get('sales/requests/(:num)', '\\App\\Modules\\Sales\\Controllers\\Api\\SalesRequestController::show/$1', ['filter' => 'permission:transfers.manage,sales.manage']);
+    $routes->get('sales/requests/(:num)/availability', '\\App\\Modules\\Sales\\Controllers\\Api\\SalesRequestController::availability/$1', ['filter' => 'permission:sales.manage']);
+
+    $routes->group('', ['filter' => 'idempotency'], static function (RouteCollection $routes): void {
+        $routes->post('scale/capture-local', '\\App\\Modules\\Weighing\\Controllers\\Api\\ScaleController::captureLocal', ['filter' => 'permission:weighings.create']);
+        $routes->post('scale/read-stable', '\\App\\Modules\\Weighing\\Controllers\\Api\\ScaleController::readStable', ['filter' => 'permission:weighings.create']);
+        $routes->post('voyages', '\\App\\Modules\\Maritime\\Controllers\\Api\\VoyageController::create', ['filter' => 'permission:voyages.manage']);
+        $routes->post('voyages/(:num)/transition', '\\App\\Modules\\Maritime\\Controllers\\Api\\VoyageController::transition/$1', ['filter' => 'permission:voyages.manage']);
+        $routes->post('rsas', '\\App\\Modules\\Maritime\\Controllers\\Api\\RsaController::create', ['filter' => 'permission:voyages.manage']);
+        $routes->post('plans', '\\App\\Modules\\DischargePlanning\\Controllers\\Api\\PlanController::create', ['filter' => 'permission:plans.manage']);
+        $routes->put('plans/(:num)', '\\App\\Modules\\DischargePlanning\\Controllers\\Api\\PlanController::update/$1', ['filter' => 'permission:plans.manage']);
+        $routes->post('plans/(:num)/duplicate', '\\App\\Modules\\DischargePlanning\\Controllers\\Api\\PlanController::duplicate/$1', ['filter' => 'permission:plans.manage']);
+        $routes->post('plans/(:num)/transition', '\\App\\Modules\\DischargePlanning\\Controllers\\Api\\PlanController::transition/$1', ['filter' => 'permission:plans.manage']);
+        $routes->post('users', '\\App\\Modules\\Users\\Controllers\\Api\\UserController::create', ['filter' => 'permission:users.manage']);
+        $routes->put('users/(:num)/group', '\\App\\Modules\\Users\\Controllers\\Api\\UserController::group/$1', ['filter' => 'permission:users.manage']);
+        $routes->put('users/(:num)/status', '\\App\\Modules\\Users\\Controllers\\Api\\UserController::status/$1', ['filter' => 'permission:users.manage']);
+        $routes->put('settings/(:num)', '\\App\\Modules\\Configuration\\Controllers\\Api\\ConfigurationController::update/$1', ['filter' => 'permission:configuration.manage']);
+        $routes->post('fillings', '\\App\\Modules\\DischargePlanning\\Controllers\\Api\\PlanController::startFilling', ['filter' => 'permission:discharge.operate']);
+        $routes->post('fillings/(:num)/complete', '\\App\\Modules\\DischargePlanning\\Controllers\\Api\\PlanController::completeFilling/$1', ['filter' => 'permission:discharge.operate']);
+        $routes->post('weighings', '\\App\\Modules\\Weighing\\Controllers\\Api\\WeighingController::create', ['filter' => 'permission:weighings.create']);
+$routes->post('warehouse-entry/weighings/(:num)/cancel', '\\App\\Modules\\WarehouseEntry\\Controllers\\Api\\WarehouseEntryController::cancelRegisteredEntry/$1', ['filter' => 'permission:weighings.reverse']);
+        $routes->post('warehouse-entry/participants', '\\App\\Modules\\WarehouseEntry\\Controllers\\Api\\WarehouseEntryController::createParticipant', ['filter' => 'permission:weighings.create']);
+        $routes->post('warehouse-entry', '\\App\\Modules\\WarehouseEntry\\Controllers\\Api\\WarehouseEntryController::create', ['filter' => 'permission:weighings.create']);
+        $routes->post('warehouse-entry/destinations/(:num)/place', '\\App\\Modules\\WarehouseEntry\\Controllers\\Api\\WarehouseEntryController::place/$1', ['filter' => 'permission:receiving.confirm']);
+        $routes->post('weighings/(:num)/reverse', '\\App\\Modules\\Weighing\\Controllers\\Api\\WeighingController::reverse/$1', ['filter' => 'permission:weighings.reverse']);
+        $routes->post('labels/print', '\\App\\Modules\\Labeling\\Controllers\\Api\\LabelController::print', ['filter' => 'permission:labels.print']);
+        $routes->post('labels/(:num)/reprint', '\\App\\Modules\\Labeling\\Controllers\\Api\\LabelController::reprint/$1', ['filter' => 'permission:labels.reprint']);
+        $routes->post('labels/jobs/(:num)/local-result', '\\App\\Modules\\Labeling\\Controllers\\Api\\LabelController::localResult/$1', ['filter' => 'permission:labels.print,labels.reprint']);
+        $routes->post('quality/inspections', '\\App\\Modules\\Quality\\Controllers\\Api\\QualityController::inspect', ['filter' => 'permission:quality.inspect']);
+        $routes->post('quality/inspections/(:num)/approve', '\\App\\Modules\\Quality\\Controllers\\Api\\QualityController::approve/$1', ['filter' => 'permission:quality.approve']);
+        $routes->post('quality/inspections/(:num)/annul', '\\App\\Modules\\Quality\\Controllers\\Api\\QualityController::annul/$1', ['filter' => 'permission:quality.inspect']);
+        $routes->post('receptions', '\\App\\Modules\\Receiving\\Controllers\\Api\\ReceivingController::create', ['filter' => 'permission:receiving.confirm']);
+        $routes->post('inventory/movements', '\\App\\Modules\\Inventory\\Controllers\\Api\\MovementController::create', ['filter' => 'permission:inventory.move']);
+        $routes->post('inventory/movements/(:num)/reverse', '\\App\\Modules\\Inventory\\Controllers\\Api\\MovementController::reverse/$1', ['filter' => 'permission:inventory.reverse']);
+        $routes->post('inventory/counts', '\\App\\Modules\\Inventory\\Controllers\\Api\\InventoryCountController::start', ['filter' => 'permission:inventory.adjust']);
+        $routes->post('inventory/counts/(:num)/lookup', '\\App\\Modules\\Inventory\\Controllers\\Api\\InventoryCountController::lookup/$1', ['filter' => 'permission:inventory.adjust']);
+        $routes->post('inventory/counts/(:num)/lines', '\\App\\Modules\\Inventory\\Controllers\\Api\\InventoryCountController::record/$1', ['filter' => 'permission:inventory.adjust']);
+        $routes->post('inventory/counts/(:num)/missing', '\\App\\Modules\\Inventory\\Controllers\\Api\\InventoryCountController::missing/$1', ['filter' => 'permission:inventory.adjust']);
+        $routes->post('inventory/counts/(:num)/finish', '\\App\\Modules\\Inventory\\Controllers\\Api\\InventoryCountController::finish/$1', ['filter' => 'permission:inventory.adjust']);
+        $routes->post('inventory/counts/(:num)/reconcile', '\\App\\Modules\\Inventory\\Controllers\\Api\\InventoryCountController::reconcile/$1', ['filter' => 'permission:inventory.adjust']);
+        $routes->post('inventory/locations/(:num)/restriction', '\\App\\Modules\\Inventory\\Controllers\\Api\\ChamberLayoutController::restrict/$1', ['filter' => 'permission:inventory.adjust']);
+        $routes->post('inventory/locations/(:num)/restriction/release', '\\App\\Modules\\Inventory\\Controllers\\Api\\ChamberLayoutController::release/$1', ['filter' => 'permission:inventory.adjust']);
+        $routes->post('requests', '\\App\\Modules\\Supply\\Controllers\\Api\\RequestController::create', ['filter' => 'permission:requests.create']);
+        $routes->post('requests/(:num)/authorize', '\\App\\Modules\\Supply\\Controllers\\Api\\RequestController::authorize/$1', ['filter' => 'permission:requests.approve']);
+        $routes->post('reservations', '\\App\\Modules\\Supply\\Controllers\\Api\\ReservationController::create', ['filter' => 'permission:reservations.manage']);
+        $routes->post('reservations/(:num)/fulfill', '\\App\\Modules\\Supply\\Controllers\\Api\\ReservationController::fulfill/$1', ['filter' => 'permission:reservations.manage']);
+        $routes->post('reservations/(:num)/release', '\\App\\Modules\\Supply\\Controllers\\Api\\ReservationController::release/$1', ['filter' => 'permission:reservations.manage']);
+        $routes->post('transfers', '\\App\\Modules\\Transfers\\Controllers\\Api\\TransferController::create', ['filter' => 'permission:transfers.manage']);
+        $routes->post('transfers/(:num)/scale/read-stable', '\\App\\Modules\\Transfers\\Controllers\\Api\\TransferController::readScale/$1', ['filter' => 'permission:transfers.manage']);
+        $routes->post('transfers/(:num)/weigh-out', '\\App\\Modules\\Transfers\\Controllers\\Api\\TransferController::weighOut/$1', ['filter' => 'permission:transfers.manage']);
+        $routes->post('transfers/(:num)/weigh-in', '\\App\\Modules\\Transfers\\Controllers\\Api\\TransferController::weighIn/$1', ['filter' => 'permission:transfers.manage']);
+        $routes->post('transfers/(:num)/authorize', '\\App\\Modules\\Transfers\\Controllers\\Api\\TransferController::authorize/$1', ['filter' => 'permission:transfers.manage']);
+        $routes->post('transfers/(:num)/ship', '\\App\\Modules\\Transfers\\Controllers\\Api\\TransferController::ship/$1', ['filter' => 'permission:transfers.manage']);
+        $routes->post('transfers/(:num)/receive', '\\App\\Modules\\Transfers\\Controllers\\Api\\TransferController::receive/$1', ['filter' => 'permission:transfers.manage']);
+        $routes->post('sales', '\\App\\Modules\\Sales\\Controllers\\Api\\SalesController::create', ['filter' => 'permission:sales.manage']);
+        $routes->post('sales/(:num)/dispatch', '\\App\\Modules\\Sales\\Controllers\\Api\\SalesController::dispatch/$1', ['filter' => 'permission:sales.manage']);
+        $routes->post('sales/requests', '\\App\\Modules\\Sales\\Controllers\\Api\\SalesRequestController::create', ['filter' => 'permission:sales.manage']);
+        $routes->post('sales/requests/customers', '\\App\\Modules\\Sales\\Controllers\\Api\\SalesRequestController::createCustomer', ['filter' => 'permission:sales.manage']);
+        $routes->post('sales/requests/(:num)/prepare', '\\App\\Modules\\Sales\\Controllers\\Api\\SalesRequestController::prepare/$1', ['filter' => 'permission:sales.manage']);
+        $routes->post('sales/requests/(:num)/ship-unit', '\\App\\Modules\\Sales\\Controllers\\Api\\SalesRequestController::shipUnit/$1', ['filter' => 'permission:transfers.manage,sales.manage']);
+        $routes->post('sales/requests/(:num)/finalize', '\\App\\Modules\\Sales\\Controllers\\Api\\SalesRequestController::finalizeOutgoing/$1', ['filter' => 'permission:transfers.manage,sales.manage']);
+$routes->post('sales/requests/(:num)/cancel-shipment', '\\App\\Modules\\Sales\\Controllers\\Api\\SalesRequestController::cancelShipment/$1', ['filter' => 'permission:transfers.manage,sales.manage']);
+        $routes->post('sales/requests/(:num)/release', '\\App\\Modules\\Sales\\Controllers\\Api\\SalesRequestController::release/$1', ['filter' => 'permission:sales.manage']);
+        $routes->post('billing/references', '\\App\\Modules\\Billing\\Controllers\\Api\\BillingController::record', ['filter' => 'permission:billing.reference']);
+    });
+});
+
+$routes->group('api/v1', ['filter' => ['rateLimit', 'apiKey']], static function (RouteCollection $routes): void {
+    $routes->get('health', '\\App\\Modules\\Integrations\\Controllers\\Api\\HealthController::index', ['filter' => 'apiPermission:health.read']);
+    $routes->get('catalogs/(:segment)', '\\App\\Modules\\Catalogs\\Controllers\\Api\\CatalogController::show/$1', ['filter' => 'apiPermission:catalogs.read']);
+    $routes->get('voyages/active', '\\App\\Modules\\Maritime\\Controllers\\Api\\VoyageController::active', ['filter' => 'apiPermission:voyages.read']);
+    $routes->get('plans/(:num)', '\\App\\Modules\\DischargePlanning\\Controllers\\Api\\PlanController::show/$1', ['filter' => 'apiPermission:plans.read']);
+    $routes->get('requests/(:num)/availability', '\\App\\Modules\\Supply\\Controllers\\Api\\RequestController::availability/$1', ['filter' => 'apiPermission:inventory.read']);
+    $routes->get('scale/status', '\\App\\Modules\\Weighing\\Controllers\\Api\\ScaleController::status', ['filter' => 'apiPermission:scale.read']);
+
+    $routes->get('inventory/movements/(:num)', '\\App\\Modules\\Inventory\\Controllers\\Api\\MovementController::show/$1', ['filter' => 'apiPermission:inventory.view']);
+
+    $routes->group('', ['filter' => 'idempotency'], static function (RouteCollection $routes): void {
+        $routes->post('scale/read-stable', '\\App\\Modules\\Weighing\\Controllers\\Api\\ScaleController::readStable', ['filter' => 'apiPermission:scale.read']);
+        $routes->post('voyages', '\\App\\Modules\\Maritime\\Controllers\\Api\\VoyageController::create', ['filter' => 'apiPermission:voyages.manage']);
+        $routes->post('voyages/(:num)/transition', '\\App\\Modules\\Maritime\\Controllers\\Api\\VoyageController::transition/$1', ['filter' => 'apiPermission:voyages.manage']);
+        $routes->post('rsas', '\\App\\Modules\\Maritime\\Controllers\\Api\\RsaController::create', ['filter' => 'apiPermission:voyages.manage']);
+        $routes->post('plans', '\\App\\Modules\\DischargePlanning\\Controllers\\Api\\PlanController::create', ['filter' => 'apiPermission:plans.manage']);
+        $routes->post('plans/(:num)/transition', '\\App\\Modules\\DischargePlanning\\Controllers\\Api\\PlanController::transition/$1', ['filter' => 'apiPermission:plans.manage']);
+        $routes->post('fillings', '\\App\\Modules\\DischargePlanning\\Controllers\\Api\\PlanController::startFilling', ['filter' => 'apiPermission:discharge.operate']);
+        $routes->post('fillings/(:num)/complete', '\\App\\Modules\\DischargePlanning\\Controllers\\Api\\PlanController::completeFilling/$1', ['filter' => 'apiPermission:discharge.operate']);
+        $routes->post('weighings', '\\App\\Modules\\Weighing\\Controllers\\Api\\WeighingController::create', ['filter' => 'apiPermission:weighings.create']);
+        $routes->post('weighings/(:num)/reverse', '\\App\\Modules\\Weighing\\Controllers\\Api\\WeighingController::reverse/$1', ['filter' => 'apiPermission:weighings.reverse']);
+        $routes->post('labels/print', '\\App\\Modules\\Labeling\\Controllers\\Api\\LabelController::print', ['filter' => 'apiPermission:labels.print']);
+        $routes->post('labels/(:num)/reprint', '\\App\\Modules\\Labeling\\Controllers\\Api\\LabelController::reprint/$1', ['filter' => 'apiPermission:labels.reprint']);
+        $routes->post('quality/inspections', '\\App\\Modules\\Quality\\Controllers\\Api\\QualityController::inspect', ['filter' => 'apiPermission:quality.inspect']);
+        $routes->post('quality/inspections/(:num)/approve', '\\App\\Modules\\Quality\\Controllers\\Api\\QualityController::approve/$1', ['filter' => 'apiPermission:quality.approve']);
+        $routes->post('receptions', '\\App\\Modules\\Receiving\\Controllers\\Api\\ReceivingController::create', ['filter' => 'apiPermission:receiving.confirm']);
+        $routes->post('inventory/movements', '\\App\\Modules\\Inventory\\Controllers\\Api\\MovementController::create', ['filter' => 'apiPermission:inventory.move']);
+        $routes->post('inventory/movements/(:num)/reverse', '\\App\\Modules\\Inventory\\Controllers\\Api\\MovementController::reverse/$1', ['filter' => 'apiPermission:inventory.reverse']);
+        $routes->post('inventory/counts', '\\App\\Modules\\Inventory\\Controllers\\Api\\InventoryCountController::start', ['filter' => 'apiPermission:inventory.adjust']);
+        $routes->post('inventory/counts/(:num)/lookup', '\\App\\Modules\\Inventory\\Controllers\\Api\\InventoryCountController::lookup/$1', ['filter' => 'apiPermission:inventory.adjust']);
+        $routes->post('inventory/counts/(:num)/lines', '\\App\\Modules\\Inventory\\Controllers\\Api\\InventoryCountController::record/$1', ['filter' => 'apiPermission:inventory.adjust']);
+        $routes->post('inventory/counts/(:num)/missing', '\\App\\Modules\\Inventory\\Controllers\\Api\\InventoryCountController::missing/$1', ['filter' => 'apiPermission:inventory.adjust']);
+        $routes->post('inventory/counts/(:num)/finish', '\\App\\Modules\\Inventory\\Controllers\\Api\\InventoryCountController::finish/$1', ['filter' => 'apiPermission:inventory.adjust']);
+        $routes->post('inventory/counts/(:num)/reconcile', '\\App\\Modules\\Inventory\\Controllers\\Api\\InventoryCountController::reconcile/$1', ['filter' => 'apiPermission:inventory.adjust']);
+        $routes->post('requests', '\\App\\Modules\\Supply\\Controllers\\Api\\RequestController::create', ['filter' => 'apiPermission:requests.create']);
+        $routes->post('requests/(:num)/authorize', '\\App\\Modules\\Supply\\Controllers\\Api\\RequestController::authorize/$1', ['filter' => 'apiPermission:requests.approve']);
+        $routes->post('reservations', '\\App\\Modules\\Supply\\Controllers\\Api\\ReservationController::create', ['filter' => 'apiPermission:reservations.manage']);
+        $routes->post('reservations/(:num)/fulfill', '\\App\\Modules\\Supply\\Controllers\\Api\\ReservationController::fulfill/$1', ['filter' => 'apiPermission:reservations.manage']);
+        $routes->post('reservations/(:num)/release', '\\App\\Modules\\Supply\\Controllers\\Api\\ReservationController::release/$1', ['filter' => 'apiPermission:reservations.manage']);
+        $routes->post('transfers', '\\App\\Modules\\Transfers\\Controllers\\Api\\TransferController::create', ['filter' => 'apiPermission:transfers.manage']);
+        $routes->post('transfers/(:num)/authorize', '\\App\\Modules\\Transfers\\Controllers\\Api\\TransferController::authorize/$1', ['filter' => 'apiPermission:transfers.manage']);
+        $routes->post('transfers/(:num)/ship', '\\App\\Modules\\Transfers\\Controllers\\Api\\TransferController::ship/$1', ['filter' => 'apiPermission:transfers.manage']);
+        $routes->post('transfers/(:num)/receive', '\\App\\Modules\\Transfers\\Controllers\\Api\\TransferController::receive/$1', ['filter' => 'apiPermission:transfers.manage']);
+        $routes->post('sales', '\\App\\Modules\\Sales\\Controllers\\Api\\SalesController::create', ['filter' => 'apiPermission:sales.manage']);
+        $routes->post('sales/(:num)/dispatch', '\\App\\Modules\\Sales\\Controllers\\Api\\SalesController::dispatch/$1', ['filter' => 'apiPermission:sales.manage']);
+        $routes->post('billing/references', '\\App\\Modules\\Billing\\Controllers\\Api\\BillingController::record', ['filter' => 'apiPermission:billing.reference']);
+    });
+});
+
+
+
+// GRUPO MAR ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â solicitudes entre almacenes v4, rutas aditivas.
+$routes->group('', ['filter'=>['session','scope']], static function (RouteCollection $routes): void {
+    $routes->get('solicitudes/almacenes/salidas', '\\App\\Modules\\WarehouseRequests\\Controllers\\PageController::outgoing', ['filter'=>'permission:transfers.manage']);
+    $routes->get('solicitudes/almacenes/entradas', '\\App\\Modules\\WarehouseRequests\\Controllers\\PageController::incoming', ['filter'=>'permission:transfers.manage']);
+    $routes->get('solicitudes/almacenes', '\\App\\Modules\\WarehouseRequests\\Controllers\\PageController::index', ['filter'=>'permission:requests.create,reservations.manage,transfers.manage,requests.approve,sales.manage']);
+});
+
+// GRUPO MAR — exportación ejecutiva de Solicitudes entre almacenes.
+$routes->group('', ['filter'=>['session','scope']], static function (RouteCollection $routes): void {
+    $reportPermission = 'permission:requests.create,reservations.manage,transfers.manage,requests.approve,sales.manage';
+    $routes->get(
+        'solicitudes/almacenes/(:num)/reporte.pdf',
+        '\App\Modules\WarehouseRequests\Controllers\ReportController::pdf/$1',
+        ['filter'=>$reportPermission]
+    );
+    $routes->get(
+        'solicitudes/almacenes/(:num)/reporte.xlsx',
+        '\App\Modules\WarehouseRequests\Controllers\ReportController::excel/$1',
+        ['filter'=>$reportPermission]
+    );
+});
+
+$routes->group('internal/v1/warehouse-requests', ['filter'=>['session','scope']], static function (RouteCollection $routes): void {
+    $controller = '\\App\\Modules\\WarehouseRequests\\Controllers\\Api\\RequestController::';
+    $read = ['filter'=>'permission:requests.create,reservations.manage,transfers.manage,requests.approve'];
+    $stockRead = ['filter'=>'permission:requests.create,reservations.manage,transfers.manage,requests.approve,sales.manage'];
+    $routes->get('', $controller.'index', $read);
+    $routes->get('availability', $controller.'availability', $stockRead);
+    $routes->get('availability-facets', $controller.'availabilityFacets', $stockRead);
+    $routes->get('lookup', $controller.'lookup', $read);
+    $routes->get('lookup-outgoing', $controller.'lookupOutgoing', ['filter'=>'permission:transfers.manage']);
+$routes->get('outgoing-recover', $controller.'recoverOutgoing', ['filter'=>'permission:transfers.manage']);
+$routes->get('outgoing-recent', $controller.'recentOutgoing', ['filter'=>'permission:transfers.manage']);
+    $routes->get('(:num)/suggest', $controller.'suggest/$1', ['filter'=>'permission:reservations.manage']);
+    $routes->get('by-transfer/(:num)', $controller.'byTransfer/$1', $read);
+    $routes->get('(:num)', $controller.'show/$1', $read);
+    $routes->group('', ['filter'=>'idempotency'], static function (RouteCollection $routes) use($controller): void {
+        $routes->post('scale-agent/capture', $controller.'captureAgentScale', ['filter'=>'permission:transfers.manage']);
+        $routes->post('', $controller.'create', ['filter'=>'permission:requests.create']);
+        $routes->post('(:num)/select', $controller.'select/$1', ['filter'=>'permission:reservations.manage']);
+        $routes->post('(:num)/reject', $controller.'reject/$1', ['filter'=>'permission:reservations.manage,requests.approve']);
+        $routes->post('(:num)/accept', $controller.'accept/$1', ['filter'=>'permission:reservations.manage,requests.approve']);
+        $routes->post('(:num)/ship', $controller.'ship/$1', ['filter'=>'permission:transfers.manage']);
+        $routes->post('(:num)/dispatch', $controller.'dispatch/$1', ['filter'=>'permission:transfers.manage']);
+$routes->post('(:num)/cancel-shipment', $controller.'cancelShipment/$1', ['filter'=>'permission:transfers.manage']);
+        $routes->post('(:num)/receive', $controller.'receive/$1', ['filter'=>'permission:transfers.manage']);
+        $routes->post('(:num)/production-retry', $controller.'retryProductionIssue/$1', ['filter'=>'permission:transfers.manage']);
+        $routes->post('(:num)/return-entry', $controller.'returnEntry/$1', ['filter'=>'permission:transfers.manage']);
+        $routes->post('(:num)/close', $controller.'close/$1', ['filter'=>'permission:transfers.manage']);
+        $routes->post('(:num)/scale', $controller.'readScale/$1', ['filter'=>'permission:transfers.manage']);
+    });
+});
+

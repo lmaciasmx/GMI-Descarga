@@ -1,0 +1,161 @@
+/* GRUPOMAR · Solicitudes entre almacenes · UI 1.0.0
+   Sólo presentación. No altera endpoints, payloads, validaciones ni lógica. */
+
+/* Datos generales: proveedor + fecha alineados; destino sigue en el contexto/resumen. */
+#wr-app .wr-general-grid{
+  display:grid;
+  grid-template-columns:minmax(280px,1.55fr) minmax(220px,1fr);
+  gap:14px;
+  align-items:end;
+}
+
+#wr-app .wr-general-provider,
+#wr-app .wr-general-required,
+#wr-app .wr-general-observations{
+  min-width:0;
+}
+
+#wr-app .wr-general-observations{
+  grid-column:1 / -1;
+}
+
+#wr-app .wr-general-provider .form-select,
+#wr-app .wr-general-required .form-control{
+  width:100%;
+}
+
+/* Productos solicitados: el contenido conserva ancho útil y desplaza dentro de la tarjeta. */
+#wr-app .wr-products-scroll{
+  width:100%;
+  max-width:100%;
+  overflow-x:auto;
+  overflow-y:visible;
+  scrollbar-gutter:stable;
+  -webkit-overflow-scrolling:touch;
+}
+
+#wr-app .wr-products-scroll::-webkit-scrollbar{
+  height:10px;
+}
+
+#wr-app .wr-products-scroll::-webkit-scrollbar-thumb{
+  background:#b8c7d3;
+  border:2px solid #f7fafc;
+  border-radius:999px;
+}
+
+#wr-app .wr-products-scroll::-webkit-scrollbar-track{
+  background:#f7fafc;
+}
+
+#wr-app .wr-products{
+  width:max-content!important;
+  min-width:1250px;
+  table-layout:auto;
+}
+
+#wr-app .wr-products th,
+#wr-app .wr-products td{
+  white-space:nowrap;
+}
+
+#wr-app .wr-products th:nth-child(1),
+#wr-app .wr-products td:nth-child(1){
+  min-width:42px;
+  width:42px;
+}
+
+#wr-app .wr-products th:nth-child(2),
+#wr-app .wr-products td:nth-child(2){
+  min-width:165px;
+}
+
+#wr-app .wr-products th:nth-child(3),
+#wr-app .wr-products td:nth-child(3){
+  min-width:120px;
+}
+
+#wr-app .wr-products th:nth-child(4),
+#wr-app .wr-products td:nth-child(4){
+  min-width:155px;
+}
+
+#wr-app .wr-products th:nth-child(5),
+#wr-app .wr-products td:nth-child(5){
+  min-width:190px;
+}
+
+#wr-app .wr-products th:nth-child(6),
+#wr-app .wr-products td:nth-child(6){
+  min-width:135px;
+}
+
+#wr-app .wr-products th:nth-child(7),
+#wr-app .wr-products td:nth-child(7){
+  min-width:150px;
+}
+
+#wr-app .wr-products th:nth-child(8),
+#wr-app .wr-products td:nth-child(8){
+  min-width:78px;
+}
+
+#wr-app .wr-products th:nth-child(9),
+#wr-app .wr-products td:nth-child(9){
+  min-width:145px;
+}
+
+#wr-app .wr-products th:nth-child(10),
+#wr-app .wr-products td:nth-child(10){
+  min-width:94px;
+}
+
+#wr-app .wr-products .form-select,
+#wr-app .wr-products .form-control{
+  width:100%;
+  min-width:100%;
+}
+
+/* Actualizar: misma altura visual que navegación de Solicitudes / Salidas / Entradas. */
+.wr-layout-actions #wr-refresh,
+.wr-layout-actions .btn-group .btn{
+  min-height:38px;
+  height:38px;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  white-space:nowrap;
+}
+
+.wr-layout-actions #wr-refresh{
+  padding:.375rem .75rem;
+}
+
+.wr-transfer-station #wr-refresh{
+  width:38px;
+  height:38px;
+  min-width:38px;
+  min-height:38px;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+}
+
+#wr-app .wr-detail-actions [data-action="reload"]{
+  min-height:34px;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  white-space:nowrap;
+}
+
+/* En pantallas medianas se conserva una alineación limpia. */
+@media(max-width:900px){
+  #wr-app .wr-general-grid{
+    grid-template-columns:1fr;
+  }
+
+  #wr-app .wr-general-observations{
+    grid-column:auto;
+  }
+}

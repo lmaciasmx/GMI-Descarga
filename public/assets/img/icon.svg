@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="Grupo Mar">
+  <rect width="512" height="512" rx="112" fill="#0b2942"/>
+  <path d="M66 314c58-54 104-54 162 0s104 54 162 0 104-54 122-35v92c-58 54-104 54-162 0s-104-54-162 0-104 54-122 35z" fill="#00a6c7"/>
+  <path d="M111 232h290l-42 73H153z" fill="#fff"/>
+  <path d="M205 101h102v131H205z" fill="#fff"/>
+  <path d="M224 121h64v42h-64z" fill="#0d5f82"/>
+</svg>

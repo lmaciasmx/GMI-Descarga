@@ -1,0 +1,28 @@
+{
+  "name": "grupo-mar-operaciones-assets",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "node scripts/build-assets.mjs",
+    "check": "node --check public/assets/js/app.js && node --check public/assets/js/dashboard.js && node --check public/assets/js/planning.js && node --check public/assets/js/discharge-station.js && node --check public/assets/js/weighing-station.js && node --check public/assets/js/labels.js && node --check public/assets/js/receiving.js && node --check public/assets/js/requests.js && node --check public/assets/js/transfers.js && node --check public/assets/js/sales.js && node --check public/assets/js/billing.js && node --check public/assets/js/movements.js && node --check public/assets/js/catalogs.js && node --check public/assets/js/quality.js && node --check public/assets/js/inventory-counts.js && node --check public/assets/js/users.js && node --check public/assets/js/configuration.js && node --check public/assets/js/audit.js && node --check public/assets/js/reports.js && node --check public/assets/js/login.js && node --check public/assets/js/warehouse-entry.js && node --check public/assets/js/warehouse-placement.js",
+    "audit": "node scripts/audit-project.mjs",
+    "verify": "node scripts/check-php.mjs && npm run check && npm run build && npm run audit"
+  },
+  "dependencies": {
+    "@zxing/browser": "^0.1.5",
+    "bootstrap": "^5.2.3",
+    "bootstrap-icons": "^1.13.1",
+    "chart.js": "^4.5.0",
+    "datatables.net": "^2.3.4",
+    "datatables.net-bs5": "^2.3.4",
+    "datatables.net-buttons": "^3.2.6",
+    "datatables.net-buttons-bs5": "^3.2.6",
+    "jquery": "^3.7.1",
+    "jszip": "^3.10.2",
+    "select2": "^4.1.0-rc.0",
+    "sweetalert2": "^11.22.5"
+  },
+  "devDependencies": {
+    "php-parser": "^3.2.5"
+  }
+}

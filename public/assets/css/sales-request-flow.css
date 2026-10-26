@@ -1,0 +1,271 @@
+/* GRUPOMAR · Venta a cliente · preparación de surtido 1.0.7 */
+
+.sale-prepare-header{
+  background:linear-gradient(135deg,#f8fbff,#ffffff);
+}
+
+.sale-prepare-eyebrow{
+  font-size:.68rem;
+  font-weight:800;
+  text-transform:uppercase;
+  letter-spacing:.06em;
+  color:#6d8094;
+}
+
+.sale-prepare-summary{
+  display:grid;
+  grid-template-columns:repeat(5,minmax(0,1fr));
+  gap:8px;
+  margin-bottom:12px;
+}
+
+.sale-prepare-summary>div{
+  border:1px solid #e1e7ee;
+  border-radius:9px;
+  background:#f9fbfd;
+  padding:9px 10px;
+}
+
+.sale-prepare-summary span,
+#salePrepareLineTotals span{
+  display:block;
+  font-size:.65rem;
+  color:#7b8999;
+  text-transform:uppercase;
+  font-weight:800;
+}
+
+.sale-prepare-summary strong{
+  display:block;
+  margin-top:3px;
+  font-size:.78rem;
+  color:#294158;
+}
+
+.sale-prepare-tabs{
+  display:flex;
+  gap:6px;
+  overflow:auto;
+  padding-bottom:8px;
+  border-bottom:1px solid #e3e9ef;
+}
+
+.sale-prepare-tab{
+  min-width:170px;
+  border:1px solid #dbe4ed;
+  border-radius:9px;
+  background:#fff;
+  padding:8px 10px;
+  text-align:left;
+  color:#526a80;
+}
+
+.sale-prepare-tab span,
+.sale-prepare-tab strong,
+.sale-prepare-tab small{
+  display:block;
+}
+
+.sale-prepare-tab span{
+  font-size:.64rem;
+  text-transform:uppercase;
+  font-weight:800;
+}
+
+.sale-prepare-tab strong{
+  margin-top:2px;
+  font-size:.77rem;
+  color:#2a4259;
+}
+
+.sale-prepare-tab small{
+  margin-top:2px;
+  font-size:.67rem;
+}
+
+.sale-prepare-tab.active{
+  border-color:#8bbcf2;
+  background:#edf6ff;
+  color:#1269c7;
+}
+
+.sale-prepare-work{
+  padding-top:12px;
+}
+
+.sale-prepare-line-head{
+  display:flex;
+  justify-content:space-between;
+  gap:16px;
+  align-items:flex-start;
+  margin-bottom:10px;
+}
+
+#salePrepareLineTitle strong,
+#salePrepareLineTitle span{
+  display:block;
+}
+
+#salePrepareLineTitle strong{
+  color:#263f57;
+  font-size:.9rem;
+}
+
+#salePrepareLineTitle span{
+  margin-top:2px;
+  color:#748397;
+  font-size:.72rem;
+}
+
+#salePrepareLineTotals{
+  display:flex;
+  gap:8px;
+}
+
+#salePrepareLineTotals>div{
+  min-width:105px;
+  border:1px solid #e2e8ef;
+  border-radius:8px;
+  background:#fff;
+  padding:7px 9px;
+}
+
+#salePrepareLineTotals strong{
+  display:block;
+  margin-top:2px;
+  font-size:.78rem;
+  color:#2d465e;
+}
+
+.sale-prepare-proposal{
+  margin-bottom:10px;
+  border:1px solid #dbe7f2;
+  border-radius:9px;
+  background:#f5f9fd;
+  padding:10px 11px;
+}
+
+.sale-proposal-head,
+.sale-proposal-empty{
+  display:flex;
+  align-items:flex-start;
+  gap:8px;
+}
+
+.sale-proposal-head i,
+.sale-proposal-empty i{
+  color:#487ba9;
+}
+
+.sale-proposal-head strong,
+.sale-proposal-head span{
+  display:block;
+}
+
+.sale-proposal-head strong{
+  font-size:.76rem;
+  color:#314b64;
+}
+
+.sale-proposal-head span,
+.sale-proposal-empty{
+  font-size:.7rem;
+  color:#708196;
+}
+
+.sale-proposal-chips{
+  display:flex;
+  flex-wrap:wrap;
+  gap:6px;
+  margin-top:8px;
+}
+
+.sale-proposal-chip{
+  display:inline-flex;
+  flex-direction:column;
+  padding:5px 8px;
+  border:1px solid #a9cbed;
+  border-radius:7px;
+  background:#fff;
+  font-size:.72rem;
+  font-weight:700;
+  color:#315f8e;
+}
+
+.sale-proposal-chip small{
+  font-size:.62rem;
+  font-weight:500;
+  color:#728196;
+}
+
+.sale-proposal-chip.unavailable{
+  border-color:#e2c9c9;
+  background:#fff7f7;
+  color:#a04c4c;
+}
+
+.sale-prepare-search{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  margin-bottom:8px;
+}
+
+.sale-prepare-search .input-group{
+  max-width:470px;
+}
+
+.sale-prepare-table-wrap{
+  max-height:46vh;
+  overflow:auto;
+  border:1px solid #e4eaf0;
+  border-radius:9px;
+}
+
+.sale-prepare-table-wrap thead th{
+  position:sticky;
+  top:0;
+  z-index:1;
+  background:#f7f9fb;
+  font-size:.68rem;
+  text-transform:uppercase;
+  color:#687a8c;
+}
+
+.sale-prepare-table-wrap tbody td{
+  font-size:.75rem;
+}
+
+.sale-prepare-table-wrap tr.is-proposed{
+  background:#f7fbff;
+}
+
+@media(max-width:992px){
+  .sale-prepare-summary{
+    grid-template-columns:repeat(2,minmax(0,1fr));
+  }
+
+  .sale-prepare-line-head{
+    flex-direction:column;
+  }
+}
+
+@media(max-width:576px){
+  .sale-prepare-summary{
+    grid-template-columns:1fr;
+  }
+
+  #salePrepareLineTotals{
+    width:100%;
+    flex-wrap:wrap;
+  }
+
+  #salePrepareLineTotals>div{
+    flex:1 1 100px;
+  }
+
+  .sale-prepare-search{
+    align-items:flex-start;
+    flex-direction:column;
+  }
+}

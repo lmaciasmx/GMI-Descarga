@@ -1,0 +1,46 @@
+/* GRUPOMAR · Traspasos · UI 1.0.0 */
+.transfer-control-card{min-width:0;overflow:hidden}
+.transfer-control-card .card-body{min-width:0}
+.transfer-table-scroll{
+  width:100%;max-width:100%;overflow-x:auto;overflow-y:visible;
+  scrollbar-gutter:stable;-webkit-overflow-scrolling:touch
+}
+.transfer-table-scroll::-webkit-scrollbar,
+.transfer-control-card .dt-layout-table>.dt-layout-full::-webkit-scrollbar{height:10px}
+.transfer-table-scroll::-webkit-scrollbar-thumb,
+.transfer-control-card .dt-layout-table>.dt-layout-full::-webkit-scrollbar-thumb{
+  background:#bdcbd5;border:2px solid #f7fafb;border-radius:999px
+}
+.transfer-table-scroll::-webkit-scrollbar-track,
+.transfer-control-card .dt-layout-table>.dt-layout-full::-webkit-scrollbar-track{background:#f7fafb}
+.transfer-control-card .dt-container{width:100%;min-width:0}
+.transfer-control-card .dt-layout-table{margin:0!important;padding:0!important;min-width:0}
+.transfer-control-card .dt-layout-table>.dt-layout-full{
+  display:block!important;width:100%!important;min-width:0!important;
+  overflow-x:auto;overflow-y:visible
+}
+.transfer-table{width:max-content!important;min-width:100%;table-layout:auto;margin-bottom:0}
+.transfer-table th,.transfer-table td{vertical-align:middle;white-space:nowrap}
+.transfer-table th:nth-child(1),.transfer-table td:nth-child(1){min-width:145px}
+.transfer-table th:nth-child(2),.transfer-table td:nth-child(2){min-width:165px}
+.transfer-table th:nth-child(3),.transfer-table td:nth-child(3){min-width:145px}
+.transfer-table th:nth-child(4),.transfer-table td:nth-child(4),
+.transfer-table th:nth-child(5),.transfer-table td:nth-child(5){min-width:185px}
+.transfer-table th:nth-child(6),.transfer-table td:nth-child(6){min-width:105px}
+.transfer-table th:nth-child(7),.transfer-table td:nth-child(7){min-width:125px;text-align:right}
+.transfer-table th:nth-child(8),.transfer-table td:nth-child(8){min-width:165px}
+.transfer-table th:nth-child(9),.transfer-table td:nth-child(9){min-width:135px}
+.transfer-table th:nth-child(10),.transfer-table td:nth-child(10){min-width:185px}
+.transfer-actions{white-space:nowrap!important}
+.transfer-actions .btn,.transfer-open-request-btn{
+  width:auto!important;min-width:max-content;display:inline-flex!important;
+  align-items:center;justify-content:center;gap:5px;white-space:nowrap!important;flex:0 0 auto
+}
+.transfer-open-request-btn{min-height:34px;padding:.35rem .7rem;line-height:1}
+.transfer-request-row td{background:#fbfdfe}
+.transfer-request-row:hover td{background:#f5fafc}
+.transfer-control-card .dt-container>.dt-layout-row{max-width:100%}
+@media(max-width:767.98px){
+  .transfer-control-card .card-body{padding-left:0;padding-right:0}
+  .transfer-control-card .card-header{padding-left:14px;padding-right:14px}
+}

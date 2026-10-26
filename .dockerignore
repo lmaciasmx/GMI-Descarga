@@ -1,0 +1,14 @@
+.env
+.git
+.github
+node_modules
+vendor
+writable/cache/*
+writable/debugbar/*
+writable/logs/*
+writable/session/*
+writable/uploads/*
+writable/labels/*
+tests
+docs/mockups
+*.zip
