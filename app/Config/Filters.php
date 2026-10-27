@@ -85,7 +85,10 @@ class Filters extends BaseFilters
         parent::__construct();
 
         // HTTPS obligatorio excepto en desarrollo local.
-        if (ENVIRONMENT !== 'development') {
+       /* if (ENVIRONMENT !== 'development') {
+            array_unshift($this->required['before'], 'forcehttps');
+        }*/
+        if (config('App')->forceGlobalSecureRequests) {
             array_unshift($this->required['before'], 'forcehttps');
         }
     }
