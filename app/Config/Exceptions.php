@@ -33,7 +33,7 @@ class Exceptions extends BaseConfig
      *
      * @var list<int>
      */
-    public array $ignoreCodes = [];
+    public array $ignoreCodes = [404];
 
     /**
      * --------------------------------------------------------------------------
